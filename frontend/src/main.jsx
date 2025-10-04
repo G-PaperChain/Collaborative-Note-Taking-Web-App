@@ -6,6 +6,7 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { ApiProvider } from "./Context/Api.jsx";
 import { ThemeProvider } from './Context/Theme.jsx';
+import { UserProvider } from './Context/User.jsx';
 import LoginPage from './Components/AuthComponents/LoginPage.jsx';
 import SignupPage from './Components/AuthComponents/SignupPage.jsx';
 
@@ -20,20 +21,24 @@ const router = createBrowserRouter([
         <div>Please try again later.</div>
       </div>
     </>,
-    children: [
-      { index: true, element: <App /> },
-      { path: "login", element : <LoginPage />},
-      { path: "signup", element : <SignupPage /> },
-    ],
   },
-
+  {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />
+  }
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <ApiProvider>
-        <RouterProvider router={router} />
+        <UserProvider>
+          <RouterProvider router={router} />
+        </UserProvider>
       </ApiProvider>
     </ThemeProvider>
   </StrictMode>,

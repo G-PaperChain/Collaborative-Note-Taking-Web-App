@@ -8,7 +8,6 @@ google_auth_bp = Blueprint('auth', __name__)
 def google_login():
     try:
         redirect_uri = url_for('auth.google_authorized', _external=True)
-
         return oauth.google.authorize_redirect(
             redirect_uri, 
             prompt="select_account"
@@ -42,15 +41,16 @@ def google_authorized():
                 )
                 db.session.add(user)
             else:
-                # Optionally update existing user info
+                # Update existing user info
                 user.name = user_info.get("name", user.name)
                 user.picture = user_info.get("picture", user.picture)
+                user.google_id = user_info["sub"]
 
             db.session.commit()
 
-            # Store user id in session
+            # Store user id in session (convert UUID to string)
             session["user"] = {
-                "id": user.id,
+                "id": str(user.user_id),  # FIXED: was user.id
                 "email": user.email,
                 "name": user.name,
                 "picture": user.picture
@@ -64,3 +64,17 @@ def google_authorized():
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 400
+
+# New endpoint to check if user is logged in
+@google_auth_bp.route('/user')
+def get_user():
+    user_data = session.get("user")
+    if user_data:
+        return jsonify(user_data), 200
+    return jsonify({"error": "Not authenticated"}), 401
+
+# Logout endpoint
+@google_auth_bp.route('/logout', methods=['POST'])
+def logout():
+    session.pop("user", None)
+    return jsonify({"message": "Logged out successfully"}), 200
