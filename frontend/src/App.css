@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+body {
+    font-family: "Inter", sans-serif;   
+}
+@theme{
+  --color-bg: #F4F5F7;
+  --color-card-bg: #FFFFFF;
+  --color-card-hover: #E6F0FF;
+  --color-text-small: #6B7280;
+  --color-text-medium: #374151;
+  --color-text-large: #111827;
+  --color-btn-bg: #3B82F6;
+  --color-btn-hover: #2563EB;
+  --color-btn-text: #FFFFFF;
+  --color-accent: #10B981;
+  --color-border: #D1D5DB;
+  --color-bg-dark: #111827;
+
+}
+
+:root {
+  --signup-bg: var(--color-text-large);
+  --signup-text: var(--color-bg);
+  --color-heey: var(--color-red-800)
+}
+
+
+/* Dark mode overrides */
+.dark {
+  --color-bg: #111827;
+  --color-card-bg: #1F2937;
+  --color-card-hover: #374151;
+  --color-text-small: #9CA3AF;
+  --color-text-medium: #D1D5DB;
+  --color-text-large: #F9FAFB;
+  --color-btn-bg: #3B82F6;
+  --color-btn-hover: #60A5FA;
+  --color-btn-text: #FFFFFF;
+  --color-accent: #22D3EE;
+  --color-border: #374151;
+  --signup-bg: var(--color-text-large);
+  --signup-text: var(--color-bg);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
