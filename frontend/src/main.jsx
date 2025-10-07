@@ -6,7 +6,6 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { ApiProvider } from "./Context/Api.jsx";
 import { ThemeProvider } from './Context/Theme.jsx';
-import { UserProvider } from './Context/User.jsx';
 import LoginPage from './Components/AuthComponents/LoginPage.jsx';
 import SignupPage from './Components/AuthComponents/SignupPage.jsx';
 
@@ -36,9 +35,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <ApiProvider>
-        <UserProvider>
-          <RouterProvider router={router} />
-        </UserProvider>
+        <RouterProvider router={router} />
       </ApiProvider>
     </ThemeProvider>
   </StrictMode>,

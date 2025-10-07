@@ -2,27 +2,10 @@ import React, { useEffect } from 'react'
 import bgvid from '/background.mp4'
 import Navbar from './Navbar'
 import { useTheme } from '../Context/Theme'
-import { useUser } from '../Context/User'
 import { MdOutlineHome } from "react-icons/md";
-import { useSearchParams } from 'react-router-dom';
 
 const Hero = () => {
     const { isDark, toggleTheme } = useTheme()
-    const { user, loading, checkAuth } = useUser()
-    const [searchParams] = useSearchParams();
-
-    useEffect(() => {
-        // Check if redirected from OAuth
-        if (searchParams.get('login') === 'success') {
-            checkAuth();
-        }
-    }, [searchParams]);
-
-    if (loading) {
-        return <div className="min-h-screen flex items-center justify-center text-white">
-            Loading...
-        </div>
-    }
 
     return (
         <div className={`relative min-h-screen w-full overflow-hidden ${isDark ? "dark" : "light"} grid grid-cols-1 grid-rows-2`}>
@@ -43,12 +26,6 @@ const Hero = () => {
                 <div className='headline flex flex-col justify-center ml-12'>
                     <div className='text-8xl font-[600] tracking-tighter'>One Place</div>
                     <div className='text-8xl font-[600] tracking-tighter'>For Shared ideas</div>
-                    
-                    {user && (
-                        <div className='mt-8 text-2xl'>
-                            Welcome back, {user.name}! 👋
-                        </div>
-                    )}
                 </div>
             </div>
 
