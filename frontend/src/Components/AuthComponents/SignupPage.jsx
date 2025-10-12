@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom'
 import GoogleButton from 'react-google-button'
 import { useApi } from '../../Context/Api'
 import { useForm } from "react-hook-form";
+import { useAuth } from '../../Context/AuthContext'
 
 const SignupPage = () => {
-  const { register, handleSubmit } = useForm();
-  const [loading, setLoading] = useState(true)
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { registerUser, isInitialized, loading, user, error } = useAuth()
   const { api } = useApi()
 
   const handleGoogleBtnClick = async () => {
@@ -16,7 +17,11 @@ const SignupPage = () => {
   }
 
   async function onSignupFormSubmit(userData) {
-    // use the Auth Context
+    try {
+      const result = await registerUser(userData)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   return (
@@ -25,43 +30,39 @@ const SignupPage = () => {
       <form className="max-w-lg z-[999] col-span-5 bg-orange-500/25 ebg-white/30 border-white/40 border-1 m-15 p-2.5 rounded-4xl shadow-2xl flex flex-col justify-center items-center gap-3.5"
       onSubmit={handleSubmit(onSignupFormSubmit)}
       >
-
-        <h1 className='text-5xl mb-6 font-semibold text-white shadow-2xs tracking-tight' >Sign up</h1>
-
+  
+        <h1 className='text-5xl mb-6 font-semibold text-white shadow-2xs tracking-tight'>Sign up</h1>
+        
         <div className=''>
           <input
             type="text"
-            {...register("name")}
+            {...register("name", { required: 'Name is required' })}
             className='
           bg-[#FEEBE8]/75 focus:bg-[#FEEBE8] rounded-xl px-4 py-3 w-96 border-b-2 border-black/25 focus:outline-0 focus:border-orange-400 transition-colors duration-400 focus:ring-0 text-black/75
           '
             placeholder='Username'
-            required
           />
         </div>
 
         <div className=''>
           <input
             type="email"
-            {...register("email")}
+            {...register("email", { required: 'Email is required', pattern: /^\S+@\S+$/i })}
             className='
           bg-[#FEEBE8]/75 focus:bg-[#FEEBE8] rounded-xl px-4 py-3 w-96 border-b-2 border-black/25 focus:outline-0 focus:border-orange-400 transition-colors duration-400 focus:ring-0 text-black/75
           '
             placeholder='Email'
-            required
           />
         </div>
 
         <div className=''>
           <input
             type="password"
-            {...register('password')}
+            {...register('password', { required: 'Password is required', validate: v => v >= 18 || "Minimum 8 Characters"})}
             className='
           bg-[#FEEBE8]/75 focus:bg-[#FEEBE8] rounded-xl px-4 py-3 w-96 border-b-2 border-black/25 focus:outline-0 focus:border-orange-400 transition-colors duration-400 focus:ring-0 text-black/75
           '
             placeholder='Password'
-            required
-            autoComplete='current-password'
           />
         </div>
 

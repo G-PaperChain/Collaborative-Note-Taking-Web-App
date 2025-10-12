@@ -1,13 +1,15 @@
-import { StrictMode } from 'react'
+import { StrictMode, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { createBrowserRouter } from "react-router";
-import { RouterProvider } from "react-router/dom";
+import { createBrowserRouter } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import { ApiProvider } from "./Context/Api.jsx";
 import { ThemeProvider } from './Context/Theme.jsx';
+import { AuthProvider } from './Context/AuthContext.jsx';
 import LoginPage from './Components/AuthComponents/LoginPage.jsx';
 import SignupPage from './Components/AuthComponents/SignupPage.jsx';
+import Draw from './Components/Draw.jsx';
 
 const router = createBrowserRouter([
   {
@@ -28,15 +30,25 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />
+  },
+  {
+    path: "/test",
+    element: <Draw />
   }
 ]);
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <ThemeProvider>
-      <ApiProvider>
-        <RouterProvider router={router} />
-      </ApiProvider>
-    </ThemeProvider>
-  </StrictMode>,
-)
+function Main() {
+  return (
+    <StrictMode>
+      <ThemeProvider>
+        <ApiProvider>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </ApiProvider>
+      </ThemeProvider>
+    </StrictMode>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<Main />);

@@ -8,6 +8,7 @@ import {
 } from "react";
 import axios from "axios";
 import { useApi } from "./Api";
+import { redirect } from "react-router";
 
 const AuthContext = createContext();
 
@@ -18,32 +19,89 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-    
-    const register = async (userData) => {
+    const [user, setUser] = useState(null)
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [isInitialized, setIsInitialized] = useState(false)
+    const [isLoggedin, setIsloggedin] = useState(false)
+    const { api } = useApi()
+    // navigation via window since AuthProvider may be mounted outside Router
+
+    useEffect(() => {
+        fetchCurrentUser();
+    }, []);
+
+    const fetchCurrentUser = async () => {
         try {
             setLoading(true);
+            const res = await api.get('/me');
+            setUser(res.data);
+            setIsloggedin(true)
+        } catch (error) {
+            setUser(null); // Any error = not authenticated or logged out .
+            setIsloggedin(false)
+        } finally {
+            setLoading(false);
+            setIsInitialized(true);
+        }
+    };
+
+    const registerUser = async (userData) => {
+        try {
+            setLoading(true);
+            setError('');
             const res = await api.post("/register", userData);
-            setUser(res.data.user || null);
-            return { success: true, user: res.data.user || null };
+            await fetchCurrentUser()
+            redirect('/')
         } catch (err) {
-            const message =
-                err?.response?.data?.error || err.message || "Registration failed";
-            return { success: false, error: message };
+            setError(err.response?.data?.error || 'Registration failed');
+            setIsloggedin(false)
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    const login = async (userData) => {
+        try {
+            setLoading(true);
+            setError('');
+            const res = await api.post("/login", userData);
+            await fetchCurrentUser()
+            redirect('/')
+        } catch (err) {
+            setError(err.response?.data?.error || 'Log in failed');
+            setIsloggedin(false)
         } finally {
             setLoading(false);
         }
     };
 
+    const logout = async () => {
+        try {
+            setLoading(true)
+            setError('');
+            let res = await api.post('/logout')
+            setUser(null)
+            setIsloggedin(false)
+        } catch (err) {
+            setError(err.response?.data?.error || 'Logout failed')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const value = {
-        // user,
-        // loading,
-        // isInitialized,
-        // login,
-        register,
-        // logout,
-        // fetchCurrentUser,
+        user,
+        loading,
+        isInitialized,
+        isLoggedin,
+        setIsloggedin,
+        login,
+        registerUser,
+        logout,
+        fetchCurrentUser,
         // changePassword,
+        error,
     };
 
     return (

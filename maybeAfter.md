@@ -1,0 +1,2 @@
+In SignupPage and LoginPage use react-hook-form to add extra frontend validation and show the error if it occurs to the user. Also elements to the respective pages to improve user experience and make it overall better.
+The main video in the background of most pages, cut the part in the start where it is black, improve it or something but atleast remove it.

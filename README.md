@@ -1,4 +1,16 @@
-# Collaborative Note-Taking & Mind-Mapping Tool
+# Collaborative Note-Taking / Mind-Mapping Tool
+
+## Real-time collaboration (multiple users edit same note or mind-map), versioning, saving, permissions.
+
+## Stack: React + WebSocket (maybe Socket.IO or use Django Channels), backend Flask or Django, Postgres.
+
+## Features: real-time sync, history/undo, sharing to others (invite via link), permissions (read/write).
+
+
+
+
+
+### Collaborative Note-Taking & Mind-Mapping Tool
 
 Unlock the future of thinking, planning, and learning — together.
 
@@ -45,5 +57,7 @@ Researchers & Writers – Connect scattered ideas into coherent frameworks effor
 “Your thoughts, connected.”
 
 “From scribbles to strategy, collaboratively.”
+
+
 
 
