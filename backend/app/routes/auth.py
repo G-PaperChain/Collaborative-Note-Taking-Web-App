@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app import db, bcrypt
-from app.models.User import User, user_schema
+from app.models.User import User
+from app.models.schemas import users_schema, UserSchema, user_schema
 from flask_login import login_user, logout_user, login_required, current_user
 
 auth_bp = Blueprint('auth', __name__)
@@ -49,8 +50,6 @@ def login():
     password = data.get('password', '')
 
     user = User.query.filter_by(email=email).first()
-
-    # if not user or not bcrypt.check_password_hash(user.password_hash, password): before was this
 
     if not user or not user.password_hash or not bcrypt.check_password_hash(user.password_hash, password):
         return jsonify({'error': 'Invalid credentials'}), 401

@@ -9,7 +9,9 @@ import { ThemeProvider } from './Context/Theme.jsx';
 import { AuthProvider } from './Context/AuthContext.jsx';
 import LoginPage from './Components/AuthComponents/LoginPage.jsx';
 import SignupPage from './Components/AuthComponents/SignupPage.jsx';
-import Draw from './Components/Draw.jsx';
+import ProtectedRoute from './Context/ProtectedRoute.jsx';
+import CreateNotesPage from './Components/NotesComponents/CreateNotesPage.jsx';
+import NotePage from './Components/NotesComponents/NotePage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -32,14 +34,26 @@ const router = createBrowserRouter([
     element: <SignupPage />
   },
   {
-    path: "/test",
-    element: <Draw />
+    path: '/create-note',
+    element: (
+      <ProtectedRoute>
+        <CreateNotesPage />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/note/:token/:noteId',
+    element: (
+      <ProtectedRoute>
+        <NotePage />
+      </ProtectedRoute>
+    )
   }
 ]);
 
 function Main() {
   return (
-    <StrictMode>
+    // <StrictMode>
       <ThemeProvider>
         <ApiProvider>
           <AuthProvider>
@@ -47,7 +61,7 @@ function Main() {
           </AuthProvider>
         </ApiProvider>
       </ThemeProvider>
-    </StrictMode>
+    // </StrictMode>
   );
 }
 

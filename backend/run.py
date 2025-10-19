@@ -1,9 +1,8 @@
 from app import create_app, db, socketio
 
-app = create_app()
+flask_app = create_app()
 
 if __name__ == '__main__':
-    with app.app_context():
+    with flask_app.app_context():
         db.create_all()
-    
-    socketio.run(app, port=5000, debug=True)
+    socketio.run(flask_app, debug=True)

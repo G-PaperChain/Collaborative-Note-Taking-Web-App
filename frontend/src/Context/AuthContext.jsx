@@ -10,6 +10,7 @@ import axios from "axios";
 import { useApi } from "./Api";
 import { redirect } from "react-router";
 
+
 const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -52,10 +53,11 @@ export const AuthProvider = ({ children }) => {
             setError('');
             const res = await api.post("/register", userData);
             await fetchCurrentUser()
-            redirect('/')
+            return { success: true }; // Return success if done
         } catch (err) {
             setError(err.response?.data?.error || 'Registration failed');
             setIsloggedin(false)
+            return { success: false };
         } finally {
             setLoading(false);
         }

@@ -4,10 +4,27 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { useState, useRef } from "react";
 import { Toast } from 'primereact/toast';
+import { FaNoteSticky } from "react-icons/fa6";
+import { useApi } from "../Context/Api";
+import { useNavigate } from "react-router-dom";
 
 export default function Button(props) {
+  const navigate = useNavigate();
   const { logout } = useAuth()
   const [buttonHover, setButtonHover] = useState(false)
+
+  const { api } = useApi()
+
+  const createNote = async () => {
+    try {
+      // const res = await api.post("/note");
+      // navigate(`/note/${res.data.id}`);
+      const res = await api.post("/note", { title: "Untitled", content: {} });
+      navigate(`/note/${res.data.note.write_token}/${res.data.note.id}`);
+    } catch (error) {
+      console.error(error)
+    }
+  };
 
   if (props.logout) {
     return (
@@ -29,6 +46,29 @@ export default function Button(props) {
           </span>
         </div>
       </button>
+    )
+  }
+
+  if (props.create) {
+    return (
+        <button
+          onClick={createNote}
+          onMouseEnter={() => setButtonHover(true)}
+          onMouseLeave={() => setButtonHover(false)}
+          className={
+            `relative px-6 py-3 gap-1.5 bg-white transition-colors cursor-pointer duration-300 font-bold flex overflow-hidden group hover:bg-white/85 rounded-lg grid-cols-7 items-center`
+          }
+        >
+          <div className="col-span-1 flex justify-center">
+            <FaNoteSticky className={`text-2xl ${buttonHover ? 'text-black transition-colors duration-300' : ''} `} />
+          </div>
+          <div className="col-span-6 flex ml-2">
+            <span className="block h-[1.4em] overflow-hidden text-black/75">
+              <span className="block transform transition-transform duration-300 group-hover:-translate-y-full">{props.text}</span>
+              <span className="block transform transition-transform duration-300 group-hover:-translate-y-full">{props.text}</span>
+            </span>
+          </div>
+        </button>
     )
   }
 

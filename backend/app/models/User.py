@@ -1,7 +1,8 @@
-from app import db, ma
+from app import db
 from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 import uuid
+from datetime import datetime
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -14,25 +15,15 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=True)
     role = db.Column(db.String(20), default="user")
     is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    notes = db.relationship('Note', backref='owner', lazy=True)
+    
+    # This relationship is correct as is
+    # collaborations = db.relationship('NoteCollaborator', backref='user_ref', lazy=True)
 
     def __repr__(self):
         return f"<User {self.email}>"
-    
+
     def get_id(self):
         return str(self.user_id)
-
-# Marshmallow Schema
-class UserSchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = User
-        load_instance = True
-
-    user_id = ma.auto_field()
-    google_id = ma.auto_field()
-    picture = ma.auto_field()
-    email = ma.auto_field()
-    name = ma.auto_field()
-    role = ma.auto_field()
-
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)

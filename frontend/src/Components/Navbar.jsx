@@ -31,13 +31,12 @@ const Navbar = () => {
             );
         }
 
-        
 
         if (user) {
             return (
                 <div className="flex items-center space-x-4 col-start-3 w-full justify-center">
 
-                    <div className={`select absolute top-9 right-25 bg-white shadow-2xl py-2.5 px-2 rounded-2xl ${isAuthSettingsOpen ? 'h-38' : 'h-max'}`}>
+                    <div className={`select absolute top-6 right-25 bg-white shadow-2xl py-2.5 px-2 rounded-2xl ${isAuthSettingsOpen ? 'h-38' : 'h-max'}`}>
                         <div className="w-50 selected-option grid grid-cols-13 justify-center items-center">
 
                             <div className="image col-span-2 justify-center items-center">
@@ -82,7 +81,7 @@ const Navbar = () => {
     }
 
     return (
-        <div className="font-semibold flex justify-between items-center transition-all duration-300 ease-linear mx-16 my-8">
+        <div className="font-semibold flex justify-between items-center transition-all duration-300 ease-linear mx-16 my-6 h-12">
             <Link to={'/'} className="text-5xl text-white transition-colors duration-300 font-[600] font-mono tracking-tighter">
                 Jotes
             </Link>
