@@ -2,7 +2,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
 from app.models.Note import Note
-from app import db
 import os
 
 notes_share_bp = Blueprint("notes_share_bp", __name__)
@@ -25,16 +24,15 @@ def create_url(note_id):
         CLIENT_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
         base_url = CLIENT_URL.rstrip('/')
 
-        # isChecked true => read-only; false => write
         if data.get('isChecked'):
             return jsonify({
                 'success': True,
-                'url': f"{base_url}/{note.read_token}/{note.id}"
+                'url': f"{base_url}/note/{note.read_token}/{note.id}"
             }), 201
         else:
             return jsonify({
                 'success': True,
-                'url': f"{base_url}/{note.write_token}/{note.id}"
+                'url': f"{base_url}/note/{note.write_token}/{note.id}"
             }), 201
 
     except Exception as e:

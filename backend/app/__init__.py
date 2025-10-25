@@ -19,9 +19,12 @@ db = SQLAlchemy()
 ma = Marshmallow()
 login_manager = LoginManager()
 migrate = Migrate()
-socketio = SocketIO(cors_allowed_origins=["http://localhost:5173"], 
-                    async_mode="eventlet", 
-                    allow_credentials=True)
+socketio = SocketIO(
+    cors_allowed_origins=["http://localhost:5173"], 
+    async_mode="eventlet", 
+    allow_credentials=True,
+    manage_session=False  # Let Flask-Login handle sessions
+)
 
 def create_app():
     app = Flask(__name__)
@@ -53,7 +56,10 @@ def create_app():
     login_manager.init_app(app)
     migrate.init_app(app, db)
     login_manager.login_view = 'auth.login'
-    socketio.init_app(app)
+    socketio.init_app(app, 
+        cors_allowed_origins=["http://localhost:5173"],
+        manage_session=False
+    )
 
     # Google OAuth blueprint
     google_bp = make_google_blueprint(

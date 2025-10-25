@@ -7,7 +7,7 @@ import secrets
 
 def generate_identifier():
     """Generate an ID like aZr-QweR-uIt (Uppercase + lowercase)"""
-    letters = string.ascii_letters  # A–Z + a–z
+    letters = string.ascii_letters
     part1 = ''.join(random.choices(letters, k=3))
     part2 = ''.join(random.choices(letters, k=4))
     part3 = ''.join(random.choices(letters, k=3))
@@ -20,12 +20,11 @@ class Note(db.Model):
     title = db.Column(db.String(150), default="Untitled")
     content = db.Column(JSON, default={})
     owner_id = db.Column(PG_UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     read_token = db.Column(db.String(32), default=lambda: secrets.token_urlsafe(16), unique=True)
     write_token = db.Column(db.String(32), default=lambda: secrets.token_urlsafe(16), unique=True)
 
-    # Add this relationship
     collaborations = db.relationship('NoteCollaborator', backref='note', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):

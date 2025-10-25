@@ -9,9 +9,8 @@ import NotesShareModal from './NotesComponents/NotesShareModal';
 
 const BottomNav = (props) => {
     const [isNotesHover, setIsNotesHover] = useState(false)
-    const [isRoomsHover, setIsRoomsHover] = useState(false)
-
-    // notepage states
+    const [isTemplateHover, setIsTemplateHover] = useState(false)
+    const [isFeaturesHover, setIsFeaturesHover] = useState(false)
     const [isHomeHover, setIsHomeHover] = useState(false)
     const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
@@ -47,13 +46,12 @@ const BottomNav = (props) => {
                         />
                     </div>
 
-
-
                     <div
                         className={`flex justify-center items-center col-start-3 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
                     >
                         <GoArrowUpRight className="transition-transform rotate-270 w-4 h-4" />
                     </div>
+
                     <div
                         className={`flex justify-center items-center col-start-4 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
                     >
@@ -69,57 +67,42 @@ const BottomNav = (props) => {
             <div className="BOTTOM_MINI_NAVBAR z-[999] grid grid-cols-3 h-auto">
                 <div className="flex col-start-2 justify-center">
                     <div
-                        className={`fixed w-[386.812px] bg-red-600 text-[15px] font-[500] rounded-3xl text-white bottom-8 overflow-hidden transition-all duration-500 ease-in-out
-        ${isNotesHover || isRoomsHover ? 'h-36' : 'h-10'}`}
-                        onMouseLeave={() => {
-                            setIsNotesHover(false)
-                            setIsRoomsHover(false)
-                        }}
+                        className={`fixed w-[386.812px] bg-red-600 text-[15px] font-[500] rounded-3xl text-white bottom-8 overflow-hidden transition-all duration-500 ease-in-out ${isNotesHover ? 'h-36' : 'h-10'}`}
+                        onMouseEnter={() => setIsNotesHover(true)}
+                        onMouseLeave={() => setIsNotesHover(false)}
                     >
 
-                        {/* Expanded content */}
                         <div
                             className={`absolute top-0 left-0 w-full transition-opacity duration-300 ease-in-out ${isNotesHover ? 'opacity-100' : 'opacity-0 pointer-events-none'
                                 }`}
                             onMouseEnter={() => setIsNotesHover(true)}
                         >
-                            <div className="flex flex-col pt-6 pb-4 px-4">
+                            <div className="flex flex-col pt-6 pb-4 px-4"
+                            >
                                 <div
-                                    className="cursor-pointer hover:translate-x-2 transition-all duration-300 text-white/65 hover:text-white">
+                                    className="cursor-pointer hover:translate-x-2 transition-all duration-300 text-white/65 hover:text-white"
+                                >
                                     <Link to={'/create-note'}>Create a Note</Link>
                                 </div>
                                 <div
-                                    className="cursor-pointer hover:translate-x-2 transition-all duration-300 text-white/65 hover:text-white">
-                                    <Link>My Notes</Link>
+                                    className="cursor-pointer hover:translate-x-2 transition-all duration-300 text-white/65 hover:text-white"
+                                >
+                                    <Link to={'/notes'}>My Notes</Link>
                                 </div>
 
                             </div>
                         </div>
 
-                        <div
-                            className={`absolute top-0 left-0 w-full transition-opacity duration-300 ease-in-out ${isRoomsHover ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                                }`}
-                            onMouseEnter={() => setIsRoomsHover(true)}
-                        >
-                            <div className="flex flex-col pt-6 pb-4 px-4">
-                                <div className="cursor-pointer hover:translate-x-2 transition-all duration-300">Create a Room</div>
-                                <div className="cursor-pointer hover:translate-x-2 transition-all duration-300">My Rooms</div>
-                            </div>
-                        </div>
-
-                        {/* Base navbar */}
-                        {/* h-24 to h-max */}
                         <div className="absolute bottom-0 left-0 grid grid-cols-14 w-full h-max items-center z-50">
-                            <div className="flex items-center justify-center h-10 w-full overflow-hidden col-span-2 rounded-full bg-red-700">
+                            <Link className="flex items-center justify-center h-10 w-full overflow-hidden col-span-2 rounded-full bg-red-700"
+                                to={'/'}
+                            >
                                 <MdOutlineHome className="h-8 w-8 p-1 cursor-pointer transition-all duration-200" />
-                            </div>
+                            </Link>
 
                             <div
-                                className={`flex justify-center items-center col-span-4 h-10 w-full hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
-                                onMouseEnter={() => {
-                                    setIsNotesHover(true)
-                                    setIsRoomsHover(false)
-                                }}
+                                className={`flex justify-center items-center col-span-4 h-10 w-full hover:bg-red-700 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
+                                onMouseEnter={() => setIsNotesHover(true)}
                             >
                                 Notes
                                 <GoChevronDown
@@ -128,23 +111,28 @@ const BottomNav = (props) => {
                             </div>
 
                             <div
-                                className={`flex justify-center items-center col-span-4 h-10 w-full hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
+                                className={`flex justify-center items-center col-span-4 h-10 w-full hover:bg-red-700 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
+                                onMouseEnter={() => {
+                                    setIsTemplateHover(true)
+                                    setIsNotesHover(false)
+                                }}
+                                onMouseLeave={() => setIsTemplateHover(false)}
+
                             >
                                 Templates
-                                <GoArrowUpRight className="transition-transform duration-300 w-4 h-4" />
+                                <GoArrowUpRight className={`transition-transform duration-300 w-4 h-4 ${isTemplateHover ? 'translate-x-0.5 -translate-y-0.5' : ''}`} />
                             </div>
 
                             <div
-                                className={`flex justify-center items-center col-span-4 h-10 w-full hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
+                                className={`flex justify-center items-center col-span-4 h-10 w-full hover:bg-red-700 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
                                 onMouseEnter={() => {
-                                    setIsRoomsHover(true)
+                                    setIsFeaturesHover(true)
                                     setIsNotesHover(false)
                                 }}
+                                onMouseLeave={() => setIsFeaturesHover(false)}
                             >
-                                Rooms
-                                <GoChevronDown
-                                    className={`${isRoomsHover ? 'rotate-180' : ''} transition-transform duration-300 w-4 h-4`}
-                                />
+                                Features
+                                <GoArrowUpRight className={`transition-transform duration-300 w-4 h-4 ${isFeaturesHover ? 'translate-x-0.5 -translate-y-0.5' : ''}`} />
                             </div>
                         </div>
                     </div>

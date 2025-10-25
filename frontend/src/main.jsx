@@ -12,6 +12,8 @@ import SignupPage from './Components/AuthComponents/SignupPage.jsx';
 import ProtectedRoute from './Context/ProtectedRoute.jsx';
 import CreateNotesPage from './Components/NotesComponents/CreateNotesPage.jsx';
 import NotePage from './Components/NotesComponents/NotePage.jsx';
+import MyNotes from './Components/NotesComponents/MyNotes.jsx';
+import { ToastProvider } from './Context/ToastContext.jsx';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
     element: <SignupPage />
   },
   {
+    path: '/notes',
+    element: (
+      <ProtectedRoute>
+        <MyNotes />
+      </ProtectedRoute>
+    )
+  },
+  {
     path: '/create-note',
     element: (
       <ProtectedRoute>
@@ -48,19 +58,23 @@ const router = createBrowserRouter([
         <NotePage />
       </ProtectedRoute>
     )
-  }
+  },
+
+
 ]);
 
 function Main() {
   return (
     // <StrictMode>
-      <ThemeProvider>
-        <ApiProvider>
-          <AuthProvider>
+    <ThemeProvider>
+      <ApiProvider>
+        <AuthProvider>
+          <ToastProvider>
             <RouterProvider router={router} />
-          </AuthProvider>
-        </ApiProvider>
-      </ThemeProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </ApiProvider>
+    </ThemeProvider>
     // </StrictMode>
   );
 }

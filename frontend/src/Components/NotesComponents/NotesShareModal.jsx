@@ -13,6 +13,7 @@ const NotesShareModal = (props) => {
     const [isChecked, setIsChecked] = useState(false);
     const [error, setError] = useState('');
     const { noteId } = useParams();
+    const [copiedToast, setCopiedToast] = useState(false)
 
     useEffect(() => {
         urlFetch()
@@ -37,6 +38,13 @@ const NotesShareModal = (props) => {
         }
     };
 
+    const copiedToastShow = () => {
+        setCopiedToast(true)
+        setTimeout(() => {
+            setCopiedToast(false)
+        }, 1000);
+    }
+
     return (
         <div className='fixed h-screen w-screen bg-black/10 z-[301]'>
             <div className='fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6'>
@@ -55,16 +63,29 @@ const NotesShareModal = (props) => {
                 </p>
                 <div className='w-full h-10 flex items-center bg-black/5 cursor-text rounded-xl mt-2'>
                     <input type="text" className="outline-0 h-max w-full cursor-text rounded-xl px-4 text-[16px]" disabled value={loading ? "Loading..." : shareUrl} />
-                    <MdContentCopy className='text-2xl bg-black/5 hover:bg-black/15 rounded-xl w-11 h-full py-2 cursor-pointer ' title='Copy link' />
+                    <MdContentCopy
+                        onClick={() => {
+                            navigator.clipboard.writeText(shareUrl)
+                            copiedToastShow()
+                        }
+                        }
+                        className='text-2xl bg-black/5 hover:bg-black/15 rounded-xl w-11 h-full py-2 cursor-pointer'
+                        title='Copy link' />
                 </div>
+
+                {copiedToast && (
+                    <div className="z-[999] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl fixed top-87 right-145 bg-green-700 text-white px-1.5 py-1">
+                        copied
+                    </div>
+                )}
 
                 <div className='flex gap-1.5 p-2'>
                     <input
-                        type="checkbox" 
+                        type="checkbox"
                         className="w-4"
                         checked={isChecked}
                         onChange={(e) => setIsChecked(e.target.checked)}
-                         />
+                    />
                     <label className='text-[15px]'>Read Only</label>
                 </div>
             </div>
