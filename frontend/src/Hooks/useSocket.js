@@ -5,7 +5,7 @@ import { useToast } from '../Context/ToastContext';
 import * as Y from 'yjs'
 import { SocketIOProvider } from 'y-socket.io'
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://backend-collab-notes-app.fly.dev'
 
 // You need consistent error handling strategy across all functions.
 

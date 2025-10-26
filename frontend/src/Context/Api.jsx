@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://backend-collab-notes-app.fly.dev/api";
 
 // Get CSRF token from cookies
 function getCSRFToken() {
