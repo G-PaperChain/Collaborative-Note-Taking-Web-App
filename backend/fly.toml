@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for backend-collab-notes-app on 2025-10-26T22:51:12+03:00
+# fly.toml app configuration file generated for backend-collab-notes-app on 2025-10-26T20:23:19Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'backend-collab-notes-app'
-primary_region = 'fra'
+primary_region = 'ams'
 
 [build]
 
@@ -20,3 +20,4 @@ primary_region = 'fra'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 1024
