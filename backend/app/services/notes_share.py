@@ -21,7 +21,7 @@ def create_url(note_id):
         if current_user.user_id != note.owner_id:
             return jsonify({"error": "Unauthorized"}), 403
 
-        CLIENT_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+        CLIENT_URL = os.getenv('FRONTEND_URL', 'https://jotes.vercel.app')
         base_url = CLIENT_URL.rstrip('/')
 
         if data.get('isChecked'):
