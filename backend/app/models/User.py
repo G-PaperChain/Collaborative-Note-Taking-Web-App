@@ -18,9 +18,6 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     notes = db.relationship('Note', backref='owner', lazy=True)
-    
-    # This relationship is correct as is
-    # collaborations = db.relationship('NoteCollaborator', backref='user_ref', lazy=True)
 
     def __repr__(self):
         return f"<User {self.email}>"

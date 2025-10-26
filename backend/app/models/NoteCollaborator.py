@@ -3,10 +3,10 @@ from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 import uuid
 from datetime import datetime
 
-class Permission:
+class Role:
     READ = 'read'
     WRITE = 'write'
-    ADMIN = 'admin'
+    OWNER = 'owner'
 
 class NoteCollaborator(db.Model):
     __tablename__ = 'note_collaborators'
@@ -14,8 +14,8 @@ class NoteCollaborator(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     note_id = db.Column(db.String(36), db.ForeignKey('notes.id'), nullable=False)
     user_id = db.Column(PG_UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
-    permission = db.Column(db.String(10), default=Permission.READ)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    role = db.Column(db.String(10))
+    created_at = db.Column(db.DateTime, default=datetime.today)
 
     user = db.relationship('User', backref='collaborations')
 

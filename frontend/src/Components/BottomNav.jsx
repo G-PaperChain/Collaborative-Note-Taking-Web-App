@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { DistributeMenuItems } from 'tldraw';
 import { IoMdShare } from "react-icons/io";
 import NotesShareModal from './NotesComponents/NotesShareModal';
+import { IoIosPeople } from "react-icons/io";
 
 const BottomNav = (props) => {
     const [isNotesHover, setIsNotesHover] = useState(false)
@@ -19,47 +20,60 @@ const BottomNav = (props) => {
     }
 
     if (props.notepage && isShareModalOpen) {
-        return <NotesShareModal handleclose={closeModal} />
+        return <NotesShareModal handleclose={closeModal} collaborators={true} />
     }
 
     if (props.notepage) {
+        const [activeModal, setActiveModal] = useState(null);
+        const closeModal = () => setActiveModal(null);
         return (
-            <div
-                className={`fixed z-[999] rotate-90 -left-[50px] top-1/2 -translate-y-1/2 bg-red-400 rounded-3xl text-white overflow-hidden transition-all duration-500 ease-in-out`}>
-                <div className="grid grid-cols-4 w-full h-9">
+            <>
+                {activeModal === "share" && (
+                    <NotesShareModal handleclose={closeModal} share={true} />
+                )}
+                {activeModal === "participants" && (
+                    <NotesShareModal handleclose={closeModal} collaborators={true} />
+                )}
 
-                    <Link to={'/'} className="cursor-pointer flex items-center justify-center h-full w-10 overflow-hidden col-start-1 rounded-full bg-red-600"
-                        onMouseEnter={() => setIsHomeHover(true)}
-                        onMouseLeave={() => setIsHomeHover(false)}
-                        title='Home'
-                    >
-                        <MdOutlineHome className="w-7 h-7 cursor-pointer transition-all duration-200 rotate-270" />
-                    </Link>
+                <div
+                    className={`fixed z-[999] rotate-90 -left-[50px] top-1/2 -translate-y-1/2 bg-red-400 rounded-3xl text-white overflow-hidden transition-all duration-500 ease-in-out`}>
+                    <div className="grid grid-cols-4 w-full h-9">
 
-                    <div
-                        className={`flex justify-center items-center col-start-2 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
-                        title='Share'
-                    >
-                        <IoMdShare
-                            className='rotate-270 w-6 h-6'
-                            onClick={() => setIsShareModalOpen(!isShareModalOpen)}
-                        />
-                    </div>
+                        <Link
+                            to={'/'}
+                            className="cursor-pointer flex items-center justify-center h-full w-10 overflow-hidden col-start-1 rounded-full bg-red-600"
+                            title='Home'
+                        >
+                            <MdOutlineHome className="w-7 h-7 cursor-pointer transition-all duration-200 rotate-270" />
+                        </Link>
 
-                    <div
-                        className={`flex justify-center items-center col-start-3 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
-                    >
-                        <GoArrowUpRight className="transition-transform rotate-270 w-4 h-4" />
-                    </div>
+                        {/* Share icon */}
+                        <div
+                            className="flex justify-center items-center col-start-2 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+                            title='Share'
+                            onClick={() => setActiveModal(activeModal === "share" ? null : "share")}
+                        >
+                            <IoMdShare className='rotate-270 w-6 h-6' />
+                        </div>
 
-                    <div
-                        className={`flex justify-center items-center col-start-4 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl`}
-                    >
-                        <GoArrowUpRight className="rotate-270 w-4 h-4" />
+                        {/* Participants icon */}
+                        <div
+                            className="flex justify-center items-center col-start-3 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+                            title='Collaborators'
+                            onClick={() => setActiveModal(activeModal === "participants" ? null : "participants")}
+                        >
+                            <IoIosPeople className="rotate-270 w-6 h-6" />
+                        </div>
+
+                        <div
+                            className="flex justify-center items-center col-start-4 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+                        >
+                            <GoArrowUpRight className="rotate-270 w-4 h-4" />
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            </>
+        );
     }
 
     return (

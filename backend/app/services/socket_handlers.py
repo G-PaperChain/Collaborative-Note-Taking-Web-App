@@ -2,7 +2,7 @@ from flask_socketio import join_room, leave_room, emit
 from app import socketio, db
 from flask_login import current_user
 from app.models.Note import Note
-from app.models.NoteCollaborator import NoteCollaborator, Permission
+from app.models.NoteCollaborator import NoteCollaborator, Role
 from flask import request
 import sys
 
@@ -95,7 +95,7 @@ def handle_join_note(data):
             user_id=current_user.user_id
         ).first()
         if collab:
-            can_edit = collab.permission in [Permission.WRITE, Permission.ADMIN]
+            can_edit = collab.permission in [Role.WRITE, Role.ADMIN]
             print(f"✅ Collaborator with {collab.permission} permission")
         else:
             print("❌ No access to this note")

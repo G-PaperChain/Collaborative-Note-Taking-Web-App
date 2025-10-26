@@ -2,15 +2,17 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app import db, socketio
 from flask_socketio import emit, join_room, leave_room
+from app.models.User import User
 from app.models.Note import Note
-from app.models.NoteCollaborator import NoteCollaborator, Permission
-from app.models.schemas import NoteSchema
+from app.models.NoteCollaborator import NoteCollaborator, Role
+from app.models.schemas import NoteSchema, NoteCollaboratorSchema
 import sys
 import traceback
 
 notes_bp = Blueprint('notes_bp', __name__)
 note_schema = NoteSchema()
 notes_schema = NoteSchema(many=True)
+collaborator_schema = NoteCollaboratorSchema(many=True)
 
 @notes_bp.route('/notes')
 @login_required
@@ -36,10 +38,7 @@ def get_notes():
             "error" : 'Unable to fetch Notes',
         }), 500
 
-
-# ---------------------------
 # CREATE NOTE
-# ---------------------------
 @notes_bp.route('/note', methods=['POST'])
 @login_required
 def create_note():
@@ -61,9 +60,7 @@ def create_note():
         traceback.print_exc()
         return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
-# ---------------------------
 # GET NOTE
-# ---------------------------
 @notes_bp.route('/note/<note_id>', methods=['GET'])
 @login_required
 def get_note(note_id):
@@ -72,7 +69,6 @@ def get_note(note_id):
         if not note:
             return jsonify({'error': 'Note not found'}), 404
 
-        # check ownership or collaborator permissions
         if note.owner_id != current_user.user_id:
             collaborator = NoteCollaborator.query.filter_by(note_id=note.id, user_id=current_user.user_id).first()
             if not collaborator:
@@ -84,9 +80,7 @@ def get_note(note_id):
         traceback.print_exc()
         return jsonify({'error': 'Internal server error'}), 500
 
-# ---------------------------
 # UPDATE NOTE
-# ---------------------------
 @notes_bp.route('/note/<note_id>', methods=['POST'])
 @login_required
 def update_note(note_id):
@@ -95,10 +89,9 @@ def update_note(note_id):
         if not note:
             return jsonify({'error': 'Note not found'}), 404
 
-        # check permissions
         if note.owner_id != current_user.user_id:
             collaborator = NoteCollaborator.query.filter_by(note_id=note.id, user_id=current_user.user_id).first()
-            if not collaborator or collaborator.permission != Permission.WRITE:
+            if not collaborator or collaborator.role != Role.WRITE:
                 return jsonify({'error': 'Unauthorized'}), 403
 
         data = request.get_json()
@@ -106,21 +99,13 @@ def update_note(note_id):
         note.title = data.get('title', note.title)
         db.session.commit()
 
-        # broadcast update via SocketIO
-        # socketio.emit('note_updated', {
-        #     'note_id': note.id,
-        #     'content': note.content
-        # }, room=note.id)
-
         return jsonify({'success': True, 'note': note_schema.dump(note)}), 200
     except Exception as e:
         print('Error updating note:', e)
         traceback.print_exc()
         return jsonify({'error': 'Internal server error'}), 500
 
-# ---------------------------
 # DELETE NOTE
-# ---------------------------
 @notes_bp.route('/note/<note_id>', methods=['DELETE'])
 @login_required
 def delete_note(note_id):
@@ -149,67 +134,99 @@ def note_access(note_id):
     if not note:
         return jsonify({'error': 'Note not found'}), 404
 
-    print(f"🔍 Checking access for note {note_id}")
-    print(f"   Token provided: {token}")
-    print(f"   User authenticated: {current_user.is_authenticated}")
-    if current_user.is_authenticated:
-        print(f"   User ID: {current_user.user_id}")
-        print(f"   Owner ID: {note.owner_id}")
-
-    # Priority 1: Check if user is the owner (if authenticated)
-    if current_user.is_authenticated and note.owner_id == current_user.user_id:
-        print("✅ User is owner")
+    # Owner always has full access
+    if note.owner_id == current_user.user_id:
         return jsonify({
-            'success' : True,
-            'can_edit': True, 
-            'role': 'Owner',
+            'success': True,
+            'can_edit': True,
+            'role': 'owner',
             'note': note_schema.dump(note)
         }), 200
 
-    # Priority 2: Check token-based access (shared links)
+    # Handle token-based access (for read/write links)
     if token:
+        role = None
         if token == note.write_token:
-            print("   ✅ Valid write token")
-            return jsonify({
-                'success' : True,
-                'can_edit': True, 
-                'role': 'Writer', 
-                'note': note_schema.dump(note)
-            }), 200
+            role = Role.WRITE
         elif token == note.read_token:
-            print("   ✅ Valid read token")
+            role = Role.READ
+
+        # If token is valid and user is logged in, add them as collaborator
+        if role and current_user.is_authenticated:
+            existing_collab = NoteCollaborator.query.filter_by(
+                note_id=note.id,
+                user_id=current_user.user_id
+            ).first()
+            if not existing_collab:
+                collaborator = NoteCollaborator(
+                    note_id=note.id,
+                    user_id=current_user.user_id,
+                    role=role
+                )
+                db.session.add(collaborator)
+                db.session.commit()
+
+        # Return based on token role (even for unauthenticated users)
+        if role == Role.WRITE:
             return jsonify({
-                'success' : True,
-                'can_edit': False, 
-                'role': 'Reader', 
+                'success': True,
+                'can_edit': True,
+                'role': 'writer',
                 'note': note_schema.dump(note)
             }), 200
-        else:
-            print("❌ Invalid token")
+        elif role == Role.READ:
             return jsonify({
-                'success' : False,
-                'error' : "Link not Found OR Invalid Link", 
-            }), 404  # added by me
+                'success': True,
+                'can_edit': False,
+                'role': 'reader',
+                'note': note_schema.dump(note)
+            }), 200
 
-    # Priority 3: Check if user is a collaborator (if authenticated)
+    # If no valid token, check if user is a collaborator
     if current_user.is_authenticated:
         collab = NoteCollaborator.query.filter_by(
-            note_id=note.id, 
+            note_id=note.id,
             user_id=current_user.user_id
         ).first()
         if collab:
-            can_edit = collab.permission == Permission.WRITE # true or false
-            print(f"✅ User is collaborator with {collab.permission} permission")
+            can_edit = collab.role == Role.WRITE
             return jsonify({
-                'success' : True,
-                'can_edit': can_edit, 
-                'role': 'Writer' if can_edit else 'Reader', 
+                'success': True,
+                'can_edit': can_edit,
+                'role': 'writer' if can_edit else 'reader',
                 'note': note_schema.dump(note)
             }), 200
 
-    # No access
-    print("❌ No access")
+    # Default: unauthorized
     return jsonify({
-        'success' : False,
+        'success': False,
         'error': 'Unauthorized'
     }), 403
+
+@notes_bp.route('/<note_id>/collaborators')
+@login_required
+def get_collaborators(note_id):
+    try:
+        note = Note.query.filter_by(id=note_id, owner_id=current_user.user_id).first()
+        if not note:
+            return jsonify({'error': 'Note not found'}), 404
+
+        collaborators = NoteCollaborator.query.filter_by(note_id=note_id).all()
+
+        if not collaborators:
+            return jsonify({
+                "success": False,
+                "error": "You have no Collaborators",
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "notes": collaborator_schema.dump(collaborators)
+        }), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({
+            "success": False,
+            "error": str(e),
+        }), 500

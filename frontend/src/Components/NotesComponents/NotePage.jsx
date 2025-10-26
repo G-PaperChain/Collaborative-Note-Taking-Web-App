@@ -2,14 +2,13 @@
 import { Tldraw, getSnapshot, loadSnapshot } from 'tldraw'
 import 'tldraw/tldraw.css'
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useApi } from '../../Context/Api'
 import BottomNav from '../BottomNav'
 import { useSocket } from '../../Hooks/useSocket'
 import Loading from '../../Pages/Loading'
 import Error from '../../Pages/Error'
 import { useToast } from '../../Context/ToastContext';
-
 
 export default function NotePage() {
 	const { token, noteId } = useParams()
@@ -25,9 +24,8 @@ export default function NotePage() {
 	const [isReconnecting, setIsReconnecting] = useState(false)
 	const { addToast } = useToast();
 
-	const [canvasData, setCanvasData] = useState([])
-	const [viewState, setViewState] = useState({ zoom: 1, x: 0, y: 0 })
-
+	// const [canvasData, setCanvasData] = useState([])
+	// const [viewState, setViewState] = useState({ zoom: 1, x: 0, y: 0 })
 
 	const handleIncomingUpdate = useCallback((data) => {
 		if (!editorRef.current || data.note_id !== noteId) return;
@@ -173,13 +171,11 @@ export default function NotePage() {
 	const setupRealTimeSync = (editor, canEdit) => {
 		console.log('🔄 Setting up real-time sync, canEdit:', canEdit);
 		if (!canEdit) {
-			console.log('❌ Read-only mode, skipping auto-save');
 			return null;
 		}
 
 		const unsubscribe = editor.store.listen(() => {
 			if (isReceivingUpdate.current) {
-				console.log('⏸️  Skipping update - receiving remote change');
 				return
 			};
 
@@ -189,7 +185,6 @@ export default function NotePage() {
 					lastSnapshotRef.current = snapshot;
 					socketRef.current?.emit('note_update', {
 						note_id: noteId,
-						// content: snapshot, was before
 						content: stripPageState(getSnapshot(editor.store)),
 					});
 				}
@@ -198,7 +193,6 @@ export default function NotePage() {
 			}
 		});
 
-		console.log('✅ Real-time sync setup complete');
 		return unsubscribe;
 	};
 
@@ -212,7 +206,7 @@ export default function NotePage() {
 	return (
 		<div className="w-screen h-screen relative">
 			<BottomNav notepage={true} />
-			<Tldraw onMount={initializeEditor} hideUi={HideUi()} />
+			<Tldraw onMount={initializeEditor} hideUi={HideUi()} className='invert' />
 
 			{!canEdit && (
 				<div className="absolute bottom-10 right-3 bg-yellow-200 text-black px-3 py-1 rounded-md shadow z-[500]">

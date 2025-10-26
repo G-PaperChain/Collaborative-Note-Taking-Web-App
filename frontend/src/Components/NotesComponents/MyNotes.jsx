@@ -52,7 +52,7 @@ const MyNotes = () => {
     }
 
     return (
-        <div className={`relative min-h-screen w-full overflow-hidden flex flex-col bg-[#F73B20] opacity-75`}>
+        <div className={`relative min-h-screen w-full overflow-hidden flex flex-col bg-[#F73B20] `}>
 
             <div className="z-10">
                 <Navbar />
