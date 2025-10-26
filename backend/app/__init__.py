@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from flask_dance.contrib.google import make_google_blueprint
 from dotenv import load_dotenv
 from flask_migrate import Migrate
+from datetime import timedelta
 from flask_socketio import SocketIO
 
 
@@ -31,7 +32,10 @@ def create_app():
 
     # Config
     app.secret_key = os.getenv("SECRET_KEY")
-    app.config['SESSION_COOKIE_SECURE'] = False  # True in production
+    app.config['SESSION_COOKIE_SECURE'] = os.getenv('ENVIRONMENT') == 'production'
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None' if os.getenv('ENVIRONMENT') == 'production' else 'Lax'
+    app.config['SESSION_COOKIE_SECURE'] = True  # True in production False if development
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
@@ -39,14 +43,17 @@ def create_app():
     app.config["GOOGLE_CLIENT_ID"] = os.getenv("GOOGLE_CLIENT_ID")
     app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
     app.config["REMEMBER_COOKIE_DURATION"] = 60 * 60 * 24 * 7
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+    ALLOWED_ORIGINS = [FRONTEND_URL, 'https://your-app.fly.dev']
 
     # CORS
     CORS(app,
-         origins=["http://localhost:5173"],
-         supports_credentials=True,
-         methods=["GET", "POST", "PUT", "DELETE"],
-         allow_headers=["Content-Type", "Authorization"],
-         expose_headers=["Set-Cookie", "X-CSRFToken"]
+        origins=ALLOWED_ORIGINS,
+        supports_credentials=True,
+        methods=["GET", "POST", "PUT", "DELETE"],
+        allow_headers=["Content-Type", "Authorization"],
+        expose_headers=["Set-Cookie", "X-CSRFToken"]
     )
 
     # Init extensions
@@ -57,7 +64,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.login_view = 'auth.login'
     socketio.init_app(app, 
-        cors_allowed_origins=["http://localhost:5173"],
+        cors_allowed_origins=ALLOWED_ORIGINS,
         manage_session=False
     )
 
@@ -126,10 +133,6 @@ def create_app():
                     'methods': list(rule.methods)
                 })
         return {'routes': routes}
-    
-    # @socketio.on("*")
-    # def catch_all(event, data=None):
-    #     print("🔹 Received event:", event, data)
 
     return app
     

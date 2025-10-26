@@ -126,6 +126,7 @@ def delete_note(note_id):
         return jsonify({'error': 'Internal server error'}), 500
 
 @notes_bp.route('/note/<note_id>/access', methods=['GET'])
+@login_required
 def note_access(note_id):
     """Check user's access level to a note"""
     token = request.args.get('token')
