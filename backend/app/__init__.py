@@ -120,6 +120,10 @@ def create_app():
     @app.route('/api/test')
     def test():
         return jsonify({"api": "Working"})
+    
+    @app.route('/test')
+    def test_route():
+        return jsonify({'app' : 'Working'})
 
     # Debug routes
     @app.route('/api/debug-routes')
