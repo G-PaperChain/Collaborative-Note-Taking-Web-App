@@ -4,9 +4,8 @@ import { useTheme } from '../Context/Theme'
 import Button from './Button.jsx'
 import { useApi } from '../Context/Api.jsx'
 import { useAuth } from '../Context/AuthContext.jsx'
-import { GoChevronDown, GoDeviceMobile } from "react-icons/go";
+import { GoChevronDown } from "react-icons/go";
 import { GoChevronUp } from "react-icons/go";
-import Toast from '../uiComponents/Toast.jsx'
 
 const Navbar = () => {
     const { user, isLoggedin, loading, logout, isInitialized } = useAuth();
