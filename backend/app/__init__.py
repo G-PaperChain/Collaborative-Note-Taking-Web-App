@@ -44,8 +44,8 @@ def create_app():
     app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
     app.config["REMEMBER_COOKIE_DURATION"] = 60 * 60 * 24 * 7
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
-    FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
-    ALLOWED_ORIGINS = [FRONTEND_URL, 'https://your-app.fly.dev']
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://jotes.vercel.app')
+    ALLOWED_ORIGINS = [FRONTEND_URL, 'https://jotes.vercel.app']
 
     # CORS
     CORS(app,
