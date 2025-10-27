@@ -21,10 +21,10 @@ ma = Marshmallow()
 login_manager = LoginManager()
 migrate = Migrate()
 socketio = SocketIO(
-    cors_allowed_origins=["https://jotes.vercel.app"], 
+    cors_allowed_origins=["http://localhost:5173"],
     async_mode="eventlet", 
     allow_credentials=True,
-    manage_session=False  # Let Flask-Login handle sessions
+    manage_session=False
 )
 
 def create_app():
@@ -32,7 +32,7 @@ def create_app():
 
     # Config
     app.secret_key = os.getenv("SECRET_KEY")
-    app.config['SESSION_COOKIE_SECURE'] = os.getenv('ENVIRONMENT') == 'production'
+    app.config['SESSION_COOKIE_SECURE'] = os.getenv('ENVIRONMENT') == 'development'
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'None' if os.getenv('ENVIRONMENT') == 'production' else 'Lax'
     app.config['SESSION_COOKIE_SECURE'] = True  # True in production False if development
@@ -44,8 +44,8 @@ def create_app():
     app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
     app.config["REMEMBER_COOKIE_DURATION"] = 60 * 60 * 24 * 7
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
-    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://jotes.vercel.app')
-    ALLOWED_ORIGINS = [FRONTEND_URL, 'https://jotes.vercel.app']
+    FRONTEND_URL = os.getenv('FRONTEND_URL')
+    ALLOWED_ORIGINS = [FRONTEND_URL]
 
     # CORS
     CORS(app,
