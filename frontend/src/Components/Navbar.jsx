@@ -11,16 +11,9 @@ const Navbar = () => {
     const { user, isLoggedin, loading, logout, isInitialized } = useAuth();
     const { isDark, toggleTheme } = useTheme();
     const { api } = useApi();
-    const [selected, setSelected] = useState();
     const [isAuthSettingsOpen, setisAuthSettingsOpen] = useState(false);
-    const [flipChevron, setFlipChevron] = useState(false)
-
-    useEffect(() => {
-        setisAuthSettingsOpen(flipChevron);
-    }, [flipChevron]);
 
     const renderAuthSection = () => {
-
         if (loading || !isInitialized) {
             return (
                 <div className="flex items-center justify-center w-full">
@@ -30,49 +23,54 @@ const Navbar = () => {
             );
         }
 
-
         if (user) {
             return (
-                <div className="flex items-center space-x-4 col-start-3 w-full justify-center">
-
-                    <div className={`select absolute top-6 right-25 bg-white shadow-2xl py-2.5 px-2 rounded-2xl ${isAuthSettingsOpen ? 'h-38' : 'h-max'}`}>
-                        <div className="w-50 selected-option grid grid-cols-13 justify-center items-center">
-
-                            <div className="image col-span-2 justify-center items-center">
-                                <img src={user?.picture} className={`w-full h-full rounded-full select-none`} />
+                <div className="relatieve absolute top-6 right-25">
+                    <div 
+                        className={`bg-white shadow-2xl py-2.5 px-2 rounded-2xl transition-all duration-300 ${
+                            isAuthSettingsOpen ? 'h-auto' : 'h-auto'
+                        }`}
+                    >
+                        {/* User info header */}
+                        <div 
+                            className="flex items-center gap-3 cursor-pointer"
+                            onClick={() => setisAuthSettingsOpen(!isAuthSettingsOpen)}
+                        >
+                            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                                <img 
+                                    src={user?.picture} 
+                                    alt={user?.name}
+                                    className="w-full h-full object-cover select-none" 
+                                />
                             </div>
 
-                            <div className="text-black/55 col-span-8 col-start-4 justify-center items-center">
+                            <div className="text-black/55 font-medium min-w-[120px] select-none">
                                 {user?.name || "User"}
                             </div>
 
-                            <div className='flex justify-center items-center col-span-2'>
-                                {
-                                    flipChevron ?
-                                        <GoChevronDown className='text-xl cursor-pointer select-none' onClick={() => setFlipChevron(!flipChevron)} />
-                                        : <GoChevronUp className='text-xl cursor-pointer select-none' onClick={() => setFlipChevron(!flipChevron)} />
-                                }
-                            </div>
-
-                            <div className={`options flex flex-col h-max gap-0.5 ${isAuthSettingsOpen ? 'py-2' : ''}`}>
-                                {
-                                    flipChevron ?
-                                        <div className='min-w-50'>
-                                            <Button manage={true} text='Manage Account'></Button>
-                                            <Button logout={true} text='Log out'></Button>
-                                        </div>
-                                        : ''
-                                }
+                            <div className="flex items-center justify-center">
+                                {isAuthSettingsOpen ? (
+                                    <GoChevronUp className="text-xl text-black/55" />
+                                ) : (
+                                    <GoChevronDown className="text-xl text-black/55" />
+                                )}
                             </div>
                         </div>
-                    </div>
 
+                        {/* Dropdown options */}
+                        {isAuthSettingsOpen && (
+                            <div className="mt-2 pt-2 border-t border-gray-200 select-none">
+                                <Button manage={true} text='Manage Account' />
+                                <Button logout={true} text='Log out' />
+                            </div>
+                        )}
+                    </div>
                 </div>
             );
         }
 
         return (
-            <div className="navbar-right flex gap-4 justify-center col-start-3 max-sm:col-start-2 w-full h-full items-center max-[770px]:col-start-2 ">
+            <div className="flex gap-4 items-center">
                 <Button login={true} text="Log in" />
                 <Button signup={true} text="Sign up" />
             </div>
@@ -81,15 +79,14 @@ const Navbar = () => {
 
     return (
         <div className="font-semibold flex justify-between items-center transition-all duration-300 ease-linear mx-16 my-6 h-12">
-            <Link className="text-5xl text-white transition-colors duration-300 font-[600] font-mono tracking-tighter">
+            <Link 
+                to="/"
+                className="text-5xl text-white transition-colors duration-300 font-[600] font-mono tracking-tighter"
+            >
                 Jotes
             </Link>
 
-            <div className='flex items-center justify-center gap-2.5'>
-
-                {renderAuthSection()}
-
-            </div>
+            {renderAuthSection()}
         </div>
     )
 }

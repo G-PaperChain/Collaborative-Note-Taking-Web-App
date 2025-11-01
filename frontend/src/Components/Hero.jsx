@@ -48,7 +48,7 @@ const MyNotesPage = () => {
             <section>
                 <div className={`relative min-h-screen w-full overflow-hidden ${isDark ? "dark" : "light"} grid grid-cols-1 grid-rows-2`}>
 
-                    {/* <video
+                    <video
                         ref={bgVideoRef}
                         src={bgvid}
                         autoPlay
@@ -59,7 +59,7 @@ const MyNotesPage = () => {
                         onCanPlay={() => console.debug('background video can play')}
                         onLoadedData={() => console.debug('background video loaded data')}
                         className={`absolute inset-0 w-full h-full object-cover ${isDark ? "opacity-25 invert" : "opacity-75"} transition-all duration-500 ease-linear`}
-                    ></video> */}
+                    ></video>
 
                     <div className="relative z-20">
                         <Navbar />
