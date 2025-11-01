@@ -71,8 +71,7 @@ const TasksPage = () => {
                         checked={task.status}
                         onChange={() => taskStatusSwitch(task.task_id)}
                       />
-                      {/* <input type="checkbox" className='w-6 h-6 cursor-pointer' checked={task.status} onChange={() => taskStatusSwitch(task.task_id)} /> */}
-                      <h1 className={`${taskStatus ? 'line-through' : ''}`}>{task.task}</h1>
+                      <h1 className={`${task.status ? 'line-through' : ''}`}>{task.task}</h1>
                     </div>
                     <MdDelete className='w-8 h-8' onClick={() => deleteTask(task.task_id)} />
                   </div>
