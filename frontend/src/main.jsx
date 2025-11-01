@@ -14,6 +14,9 @@ import CreateNotesPage from './Components/NotesComponents/CreateNotesPage.jsx';
 import NotePage from './Components/NotesComponents/NotePage.jsx';
 import MyNotes from './Components/NotesComponents/MyNotes.jsx';
 import { ToastProvider } from './Context/ToastContext.jsx';
+import TasksPage from './Components/TaskComponents/TasksPage.jsx';
+import { TaskProvider } from './Context/TaskContext.jsx';
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 
 const router = createBrowserRouter([
   {
@@ -38,44 +41,48 @@ const router = createBrowserRouter([
   {
     path: '/notes',
     element: (
-      <ProtectedRoute>
-        <MyNotes />
-      </ProtectedRoute>
+      <MyNotes />
     )
   },
   {
     path: '/create-note',
     element: (
-      <ProtectedRoute>
-        <CreateNotesPage />
-      </ProtectedRoute>
+      <CreateNotesPage />
     )
   },
   {
     path: '/note/:token/:noteId',
     element: (
-      <ProtectedRoute>
-        <NotePage />
-      </ProtectedRoute>
+      <NotePage />
     )
   },
+  {
+    path: '/tasks',
+    element: (
+      <TasksPage />
+    )
+  }
 
 
 ]);
 
 function Main() {
   return (
-    // <StrictMode>
-    <ThemeProvider>
-      <ApiProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <RouterProvider router={router} />
-          </ToastProvider>
-        </AuthProvider>
-      </ApiProvider>
-    </ThemeProvider>
-    // </StrictMode>
+    <StrictMode>
+      <ThemeProvider>
+        <ApiProvider>
+          <AuthProvider>
+            <PrimeReactProvider>
+              <TaskProvider>
+                <ToastProvider>
+                  <RouterProvider router={router} />
+                </ToastProvider>
+              </TaskProvider>
+            </PrimeReactProvider>
+          </AuthProvider>
+        </ApiProvider>
+      </ThemeProvider>
+    </StrictMode>
   );
 }
 

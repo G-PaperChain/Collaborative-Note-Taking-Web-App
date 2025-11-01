@@ -8,6 +8,7 @@ import BottomNav from '../BottomNav'
 import { useSocket } from '../../Hooks/useSocket'
 import Loading from '../../Pages/Loading'
 import Error from '../../Pages/Error'
+import Modal from './Modal'
 import { useToast } from '../../Context/ToastContext';
 
 export default function NotePage() {
@@ -23,9 +24,6 @@ export default function NotePage() {
 	const [role, setRole] = useState('')
 	const [isReconnecting, setIsReconnecting] = useState(false)
 	const { addToast } = useToast();
-
-	// const [canvasData, setCanvasData] = useState([])
-	// const [viewState, setViewState] = useState({ zoom: 1, x: 0, y: 0 })
 
 	const handleIncomingUpdate = useCallback((data) => {
 		if (!editorRef.current || data.note_id !== noteId) return;
@@ -60,7 +58,6 @@ export default function NotePage() {
 
 	useEffect(() => {
 		return () => {
-			console.log('🔄 NotePage unmounting, calling leaveNote')
 			leaveNote();
 		};
 	}, [leaveNote]);
@@ -142,7 +139,6 @@ export default function NotePage() {
 			}
 		})();
 
-		// ✅ Return cleanup function directly
 		return () => {
 			if (editor._unsubscribe) editor._unsubscribe();
 		};

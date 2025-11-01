@@ -81,7 +81,7 @@ const Navbar = () => {
 
     return (
         <div className="font-semibold flex justify-between items-center transition-all duration-300 ease-linear mx-16 my-6 h-12">
-            <Link to={'/'} className="text-5xl text-white transition-colors duration-300 font-[600] font-mono tracking-tighter">
+            <Link className="text-5xl text-white transition-colors duration-300 font-[600] font-mono tracking-tighter">
                 Jotes
             </Link>
 

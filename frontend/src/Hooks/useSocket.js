@@ -2,10 +2,8 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import { useToast } from '../Context/ToastContext';
-import * as Y from 'yjs'
-import { SocketIOProvider } from 'y-socket.io'
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://backend-collab-notes-app.fly.dev'
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'
 
 // You need consistent error handling strategy across all functions.
 
@@ -74,7 +72,7 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
                 setIsReconnecting(false)
             })
 
-            socket.on('note_updated', onNoteUpdated);
+            socket.on('note_update', onNoteUpdated); // changed from note_updated to note_update
 
             handleReconnection(socket)
 

@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import { IoIosClose } from "react-icons/io";
 import { IoPersonAdd } from "react-icons/io5";
 import { MdContentCopy } from "react-icons/md";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { useApi } from '../../Context/Api'
+import { Calendar } from 'primereact/calendar';
+import { useForm } from 'react-hook-form'
+import { useTask } from '../../Context/TaskContext';
 
-
-const NotesShareModal = (props) => {
+const Modal = (props) => {
     const { api } = useApi()
     const { noteId } = useParams();
     const [shareUrl, setShareUrl] = useState('');
@@ -15,11 +18,35 @@ const NotesShareModal = (props) => {
     const [error, setError] = useState('');
     const [copiedToast, setCopiedToast] = useState(false)
     const [notesCollaborators, SetNotesCollaborators] = useState([])
+    const [date, setDate] = useState(null);
+    const taskInputRef = useRef(null);
+    const { isLoading, taskError, createTask, fetchTasks } = useTask();
+
+    const { register, handleSubmit } = useForm();
+
+    const onSubmit = (data) => {
+        const formattedDate = date
+            ? date.toISOString().split("T")[0]
+            : null;
+
+        if (!isLoading | !taskError) {
+            createTask(data)
+            props.handleclose()
+            fetchTasks()
+        }
+    };
 
     useEffect(() => {
-        urlFetch()
-        fetchNotesCollaborators(noteId)
-    }, [isChecked]);
+        if (props.share) {
+            urlFetch();
+        }
+    }, [isChecked, props.share]);
+
+    useEffect(() => {
+        if (props.collaborators) {
+            fetchNotesCollaborators(noteId);
+        }
+    }, [isChecked, props.collaborators]);
 
     const urlFetch = async () => {
         try {
@@ -75,12 +102,72 @@ const NotesShareModal = (props) => {
                     </div>
                     <div className='flex flex-col gap-1'>
                         {
-                            notesCollaborators.map((collab) =>
-                                <div className='bg-[#F73B20] text-white px-2 py-3 rounded-lg select-none cursor-pointer hover:bg-[#F71B20]'>
+                            notesCollaborators && notesCollaborators.map((collab) =>
+                                <div key={collab.user_id} className='bg-[#F73B20] text-white px-2 py-3 rounded-lg select-none cursor-pointer hover:bg-[#F71B20]'>
                                     {collab.user_name}
                                 </div>)
                         }
                     </div>
+                </div>
+            </div>
+        )
+    }
+
+    if (props.tasks) {
+        return (
+            <div
+                className="fixed h-screen w-screen bg-black/20 z-[999] text-black"
+                onClick={props.handleclose}
+            >
+                <div
+                    className="fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6"
+                    onClick={(e) => e.stopPropagation()} // prevent background click
+                >
+                    <div className="grid grid-cols-8 h-max items-center">
+                        <h1 className="text-black select-none col-span-5 col-start-1 text-2xl">
+                            Create a Task
+                        </h1>
+                        <IoIosClose
+                            onClick={props.handleclose}
+                            className="text-4xl hover:bg-black/5 rounded-full cursor-pointer mt-2.5 mr-2.5 col-start-8"
+                        />
+                    </div>
+
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="flex flex-col mt-2.5">
+                            <label className="text-lg">Task:</label>
+                            <input
+                                type="text"
+                                ref={taskInputRef}
+                                autoFocus
+                                {...register("task", { required: true })}
+                                className="border-1 px-1 py-2 rounded-xl text-lg"
+                            />
+                        </div>
+
+                        <div className="flex flex-col mt-2">
+                            <label className="text-lg">
+                                Deadline:
+                                <span className="text-black/45 ml-1">(optional)</span>
+                            </label>
+                            <Calendar
+                                className="rounded-xl overflow-hidden border-1"
+                                id=""
+                                value={date}
+                                onChange={(e) => setDate(e.value)}
+                            />
+                        </div>
+                        <div>{taskError ? taskError : ''}</div>
+                        <div>{isLoading ? isLoading : ''}</div>
+                        <div className="flex justify-center mt-3.5">
+                            <button
+                                type="submit"
+                                className="bg-orange-400 hover:bg-orange-500 text-lg cursor-pointer px-3 py-0.5 rounded-xl"
+                            >
+                                Create
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         )
@@ -136,4 +223,4 @@ const NotesShareModal = (props) => {
     }
 }
 
-export default NotesShareModal
+export default Modal

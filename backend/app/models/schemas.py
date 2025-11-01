@@ -2,6 +2,7 @@ from app import ma
 from .User import User
 from .Note import Note
 from .NoteCollaborator import NoteCollaborator
+from .Task import Task
 
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -20,7 +21,6 @@ class NoteSchema(ma.SQLAlchemyAutoSchema):
         model = Note
         load_instance = True
 
-# Schema instances
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 note_schema = NoteSchema()
@@ -37,3 +37,12 @@ class NoteCollaboratorSchema(ma.SQLAlchemyAutoSchema):
     user_email = ma.Function(lambda obj: obj.user.email if obj.user else None)
 
 collaborator_schema = NoteCollaboratorSchema(many=True)
+
+class TaskSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Task
+        include_fk = True
+        load_instance = True
+
+task_schema = TaskSchema()
+tasks_schema = TaskSchema(many=True)

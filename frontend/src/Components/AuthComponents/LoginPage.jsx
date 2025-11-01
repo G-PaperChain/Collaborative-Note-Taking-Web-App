@@ -13,7 +13,7 @@ const SignupPage = () => {
   const { api } = useApi()
 
   const handleGoogleBtnClick = async () => {
-    window.location.href = "https://backend-collab-notes-app.fly.dev/api/login/google";
+    window.location.href = "http://localhost:5000/api/login/google";
   }
 
   async function onSignupFormSubmit(userData) { // change this functiuon

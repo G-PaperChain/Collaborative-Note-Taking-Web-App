@@ -6,10 +6,6 @@
 
 ## Features: real-time sync, history/undo, sharing to others (invite via link), permissions (read/write).
 
-
-
-
-
 ### Collaborative Note-Taking & Mind-Mapping Tool
 
 Unlock the future of thinking, planning, and learning — together.
@@ -30,7 +26,7 @@ Secure & Private – End-to-end encrypted sessions ensure your thoughts remain y
 
 Custom Workspaces – Create personal, team, or project-based spaces tailored to your workflow.
 
- ### 🎯 Why It Stands Out
+### 🎯 Why It Stands Out
 
 Unlike traditional note apps or rigid diagram tools, this solution is designed for thinkers:
 

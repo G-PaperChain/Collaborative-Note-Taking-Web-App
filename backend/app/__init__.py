@@ -21,7 +21,7 @@ ma = Marshmallow()
 login_manager = LoginManager()
 migrate = Migrate()
 socketio = SocketIO(
-    cors_allowed_origins=["http://localhost:5173"],
+    cors_allowed_origins=["http://localhost:5173/"],
     async_mode="eventlet", 
     allow_credentials=True,
     manage_session=False
@@ -34,8 +34,8 @@ def create_app():
     app.secret_key = os.getenv("SECRET_KEY")
     app.config['SESSION_COOKIE_SECURE'] = os.getenv('ENVIRONMENT') == 'development'
     app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'None' if os.getenv('ENVIRONMENT') == 'production' else 'Lax'
-    app.config['SESSION_COOKIE_SECURE'] = True  # True in production False if development
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None' # if os.getenv('ENVIRONMENT') == 'production' then 'Lax'
+    app.config['SESSION_COOKIE_SECURE'] = False  # True in production False if development
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
@@ -44,19 +44,16 @@ def create_app():
     app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
     app.config["REMEMBER_COOKIE_DURATION"] = 60 * 60 * 24 * 7
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
-    FRONTEND_URL = os.getenv('FRONTEND_URL')
-    ALLOWED_ORIGINS = [FRONTEND_URL]
 
     # CORS
     CORS(app,
-        origins=ALLOWED_ORIGINS,
+        origins='http://localhost:5173',
         supports_credentials=True,
         methods=["GET", "POST", "PUT", "DELETE"],
         allow_headers=["Content-Type", "Authorization"],
         expose_headers=["Set-Cookie", "X-CSRFToken"]
     )
 
-    # Init extensions
     db.init_app(app)
     bcrypt.init_app(app)
     ma.init_app(app)
@@ -64,7 +61,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.login_view = 'auth.login'
     socketio.init_app(app, 
-        cors_allowed_origins=ALLOWED_ORIGINS,
+        cors_allowed_origins='http://localhost:5173',
         manage_session=False
     )
 
@@ -81,11 +78,11 @@ def create_app():
     )
     app.register_blueprint(google_bp, url_prefix="/oauth")
 
-    # Import models AFTER db.init_app to avoid circular imports
     with app.app_context():
         from app.models.User import User
         from app.models.Note import Note
         from app.models.NoteCollaborator import NoteCollaborator
+        from app.models.Task import Task
 
         User.notes = db.relationship(
             "Note",
@@ -109,23 +106,18 @@ def create_app():
     from app.routes.google_auth import google_auth_bp
     from app.routes.notes import notes_bp
     from app.services.notes_share import notes_share_bp
+    from app.routes.tasks import tasks_bp
+    from app.services import socket_handlers
     app.register_blueprint(notes_bp, url_prefix="/api")
+    app.register_blueprint(tasks_bp, url_prefix="/api")
     app.register_blueprint(notes_share_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(google_auth_bp, url_prefix="/api")
 
-    from app.services import socket_handlers
-
-    # Test route
     @app.route('/api/test')
     def test():
         return jsonify({"api": "Working"})
-    
-    @app.route('/test')
-    def test_route():
-        return jsonify({'app' : 'Working'})
 
-    # Debug routes
     @app.route('/api/debug-routes')
     def debug_routes():
         routes = []
@@ -139,4 +131,3 @@ def create_app():
         return {'routes': routes}
 
     return app
-    
