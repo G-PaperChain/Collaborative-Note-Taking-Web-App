@@ -8,6 +8,10 @@ import { useApi } from '../../Context/Api'
 import { Calendar } from 'primereact/calendar';
 import { useForm } from 'react-hook-form'
 import { useTask } from '../../Context/TaskContext';
+import { MdDelete } from "react-icons/md";
+import { motion } from 'framer-motion';
+import { useTheme } from '../../Context/Theme';
+
 
 const Modal = (props) => {
     const { api } = useApi()
@@ -20,7 +24,8 @@ const Modal = (props) => {
     const [notesCollaborators, SetNotesCollaborators] = useState([])
     const [date, setDate] = useState(null);
     const taskInputRef = useRef(null);
-    const { isLoading, taskError, createTask, fetchTasks } = useTask();
+    const [isDragging, setIsDragging] = useState(false);
+    const { isLoading, taskError, createTask, fetchTasks, tasks, deleteTask, taskStatusSwitch } = useTask();
 
     const { register, handleSubmit } = useForm();
 
@@ -47,6 +52,12 @@ const Modal = (props) => {
             fetchNotesCollaborators(noteId);
         }
     }, [isChecked, props.collaborators]);
+
+    useEffect(() => {
+        if (props.taskEmbed) {
+            fetchTasks()
+        }
+    }, [isChecked, props.taskEmbed]);
 
     const urlFetch = async () => {
         try {
@@ -90,9 +101,17 @@ const Modal = (props) => {
         }, 1000);
     }
 
+    const handleDragStart = () => {
+        setIsDragging(true);
+    };
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+    };
+
     if (props.collaborators) {
         return (
-            <div className='fixed h-screen w-screen bg-black/10 z-[301]'>
+            <div className='fixed h-screen w-screen bg-black/10 z-[301] text-black'>
                 <div className='fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6'>
                     <div className='grid grid-cols-8 h-max items-center'>
                         <h1 className='text-black select-none col-span-5 col-start-1 text-xl'>Collaborators</h1>
@@ -175,7 +194,7 @@ const Modal = (props) => {
 
     if (props.share) {
         return (
-            <div className='fixed h-screen w-screen bg-black/10 z-[301]'>
+            <div className='fixed h-screen w-screen bg-black/10 z-[301] text-black'>
                 <div className='fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6'>
                     <div className='grid grid-cols-8 h-max items-center'>
                         <h1 className='text-black select-none col-span-5 col-start-1 text-xl'>Your Note's Ready</h1>
@@ -216,6 +235,51 @@ const Modal = (props) => {
                             onChange={(e) => setIsChecked(e.target.checked)}
                         />
                         <label className='text-[15px]'>Read Only</label>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    if (props.taskEmbed) {
+        return (
+            <div className='fixed h-screen w-screen bg-black/10 z-[301] text-black'>
+                <div className='fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6'>
+                    <div className='grid grid-cols-8 h-max items-center'>
+                        <h1 className='text-black select-none col-span-5 col-start-1 text-xl'>Embed Tasks</h1>
+                        <IoIosClose
+                            onClick={props.handleclose}
+                            className='text-4xl hover:bg-black/5 rounded-full cursor-pointer mt-2.5 mr-2.5 col-start-8' />
+                    </div>
+                    <div>
+                        {
+                            tasks.map((task) =>
+                                <motion.div
+                                    key={task.task_id}
+                                    className='bg-[#F73B20] hover:bg-[#D73B20] transition-all duration-200 text-white text-2xl px-6 py-3 rounded-2xl'
+                                    style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                                    onMouseDown={handleDragStart}
+                                    onMouseUp={handleDragEnd}
+                                    drag
+                                    dragMomentum={false}
+                                >
+
+                                    <div className='flex justify-between items-center'>
+                                        <div className='flex gap-3.5 items-center'>
+                                            <input
+                                                type='checkbox'
+                                                // defaultChecked
+                                                className='checkbox checkbox-xl checkbox-warning'
+                                                checked={task.status}
+                                                onChange={() => taskStatusSwitch(task.task_id)}
+                                            />
+                                            <h1 className={`${task.status ? 'line-through' : ''}`}>{task.task}</h1>
+                                        </div>
+                                        <MdDelete className='w-8 h-8' onClick={() => deleteTask(task.task_id)} />
+                                    </div>
+                                </motion.div>
+                            )
+                        }
                     </div>
                 </div>
             </div>

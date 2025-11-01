@@ -3,10 +3,12 @@ import { MdOutlineHome } from "react-icons/md";
 import { GoChevronDown } from "react-icons/go";
 import { GoArrowUpRight } from "react-icons/go";
 import { Link } from 'react-router-dom';
-import { DistributeMenuItems } from 'tldraw';
 import { IoMdShare } from "react-icons/io";
 import Modal from './NotesComponents/Modal';
+import { FaTasks } from "react-icons/fa";
 import { IoIosPeople } from "react-icons/io";
+import { useTheme } from '../Context/Theme';
+import { CgDarkMode } from "react-icons/cg";
 
 const BottomNav = (props) => {
 	const [isNotesHover, setIsNotesHover] = useState(false)
@@ -14,7 +16,8 @@ const BottomNav = (props) => {
 	const [isFeaturesHover, setIsFeaturesHover] = useState(false)
 	const [isHomeHover, setIsHomeHover] = useState(false)
 	const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-
+	const { toggleTheme } = useTheme()
+ 
 	const closeModal = () => {
 		setIsShareModalOpen(false)
 	}
@@ -34,10 +37,13 @@ const BottomNav = (props) => {
 				{activeModal === "participants" && (
 					<Modal handleclose={closeModal} collaborators={true} />
 				)}
+				{activeModal === "taskEmbed" && (
+					<Modal handleclose={closeModal} taskEmbed={true} />
+				)}
 
 				<div
-					className={`fixed z-[999] rotate-90 -left-[50px] top-1/2 -translate-y-1/2 bg-red-400 rounded-3xl text-white overflow-hidden transition-all duration-500 ease-in-out`}>
-					<div className="grid grid-cols-4 w-full h-9">
+					className={`fixed z-[999] rotate-90 -left-[60px] top-1/2 -translate-y-1/2 bg-red-400 rounded-3xl text-white overflow-hidden transition-all duration-500 ease-in-out`}>
+					<div className="grid grid-cols-5 w-full h-9">
 
 						<Link
 							to={'/'}
@@ -47,9 +53,17 @@ const BottomNav = (props) => {
 							<MdOutlineHome className="w-7 h-7 cursor-pointer transition-all duration-200 rotate-270" />
 						</Link>
 
-						{/* Share icon */}
 						<div
 							className="flex justify-center items-center col-start-2 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+							title={`useIsDarkMode`}
+							onClick={() => toggleTheme()}
+						>
+							<CgDarkMode className='rotate-270 w-6 h-6' />
+						</div>
+
+						{/* Share icon */}
+						<div
+							className="flex justify-center items-center col-start-3 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
 							title='Share'
 							onClick={() => setActiveModal(activeModal === "share" ? null : "share")}
 						>
@@ -58,7 +72,7 @@ const BottomNav = (props) => {
 
 						{/* Participants icon */}
 						<div
-							className="flex justify-center items-center col-start-3 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+							className="flex justify-center items-center col-start-4 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
 							title='Collaborators'
 							onClick={() => setActiveModal(activeModal === "participants" ? null : "participants")}
 						>
@@ -66,10 +80,12 @@ const BottomNav = (props) => {
 						</div>
 
 						<div
-							className="flex justify-center items-center col-start-4 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+							className="flex justify-center items-center col-start-5 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+							onClick={() => setActiveModal(activeModal === "taskEmbed" ? null : "taskEmbed")}
 						>
-							<GoArrowUpRight className="rotate-270 w-4 h-4" />
+							<FaTasks className="rotate-270 w-4 h-4" />
 						</div>
+
 					</div>
 				</div>
 			</>

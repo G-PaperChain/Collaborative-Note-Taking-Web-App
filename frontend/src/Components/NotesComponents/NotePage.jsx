@@ -1,5 +1,5 @@
 // frontend/src/Components/NotesComponents/NotePage.jsx
-import { Tldraw, getSnapshot, loadSnapshot } from 'tldraw'
+import { Tldraw, getSnapshot, isDefined, loadSnapshot } from 'tldraw'
 import 'tldraw/tldraw.css'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
@@ -10,6 +10,7 @@ import Loading from '../../Pages/Loading'
 import Error from '../../Pages/Error'
 import Modal from './Modal'
 import { useToast } from '../../Context/ToastContext';
+import { useTheme } from '../../Context/Theme'
 
 export default function NotePage() {
 	const { token, noteId } = useParams()
@@ -24,6 +25,7 @@ export default function NotePage() {
 	const [role, setRole] = useState('')
 	const [isReconnecting, setIsReconnecting] = useState(false)
 	const { addToast } = useToast();
+	const { isDark } = useTheme()
 
 	const handleIncomingUpdate = useCallback((data) => {
 		if (!editorRef.current || data.note_id !== noteId) return;
@@ -202,7 +204,7 @@ export default function NotePage() {
 	return (
 		<div className="w-screen h-screen relative">
 			<BottomNav notepage={true} />
-			<Tldraw onMount={initializeEditor} hideUi={HideUi()} className='invert' />
+			<Tldraw onMount={initializeEditor} hideUi={HideUi()} className={`${ isDark ? "invert" : '' }`} />
 
 			{!canEdit && (
 				<div className="absolute bottom-10 right-3 bg-yellow-200 text-black px-3 py-1 rounded-md shadow z-[500]">
