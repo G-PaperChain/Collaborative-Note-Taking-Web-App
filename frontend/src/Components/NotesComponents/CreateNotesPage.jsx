@@ -4,10 +4,15 @@ import Button from '../Button';
 import BottomNav from '../BottomNav';
 import { useNavigate } from "react-router-dom";
 import { useApi } from '../../Context/Api';
-
+import Modal from './Modal';
 
 const CreateNotesPage = () => {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
+    const closeModal = () => {
+        setIsCreateModalOpen(false);
+    }
+    
     return (
         <div className={`relative min-h-screen w-full overflow-hidden flex flex-col bg-[#F73B20]`}>
 
@@ -24,9 +29,11 @@ const CreateNotesPage = () => {
                     <p className='w-80 font-[600] text-[24px] text-white leading-7'>
                         Create your mindmaps and notes and even collabortate with friend along the way.
                     </p>
-                    <Button create={true} text='Create a Note'></Button>
+                    <Button createNoteModalOpen={true} text='Create a Note' setIsCreateModalOpen={setIsCreateModalOpen} isCreateModalOpen={isCreateModalOpen} />
                 </div>
             </div>
+
+            {isCreateModalOpen ? <Modal createNoteModal={true} handleclose={closeModal} /> : ''}
 
             <BottomNav />
 

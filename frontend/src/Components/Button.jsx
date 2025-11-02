@@ -6,22 +6,12 @@ import { useState } from "react";
 import { FaNoteSticky } from "react-icons/fa6";
 import { useApi } from "../Context/Api";
 import { IoIosCreate } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import Modal from "./NotesComponents/Modal";
 
 export default function Button(props) {
-  const navigate = useNavigate();
   const { logout } = useAuth()
   const [buttonHover, setButtonHover] = useState(false)
   const { api } = useApi()
-
-  const createNote = async () => {
-    try {
-      const res = await api.post("/note", { title: "Untitled", content: {} });
-      navigate(`/note/${res.data.note.write_token}/${res.data.note.id}`);
-    } catch (error) {
-      console.error(error)
-    }
-  };
 
   if (props.tasks) {
     return (
@@ -69,14 +59,14 @@ export default function Button(props) {
     )
   }
 
-  if (props.create) {
+  if (props.createNoteModalOpen) {
     return (
       <button
-        onClick={createNote}
+        onClick={() => props.setIsCreateModalOpen(!props.isCreateModalOpen)}
         onMouseEnter={() => setButtonHover(true)}
         onMouseLeave={() => setButtonHover(false)}
         className={
-          `relative px-6 py-3 gap-1.5 bg-white transition-colors cursor-pointer duration-300 font-bold flex overflow-hidden group hover:bg-white/85 rounded-lg grid-cols-7 items-center`
+          `relative text-black px-6 py-3 gap-1.5 bg-white transition-colors cursor-pointer duration-300 font-bold flex overflow-hidden group hover:bg-white/85 rounded-lg grid-cols-7 items-center`
         }
       >
         <div className="col-span-1 flex justify-center">
@@ -84,6 +74,29 @@ export default function Button(props) {
         </div>
         <div className="col-span-6 flex ml-2">
           <span className="block h-[1.4em] overflow-hidden text-black/75">
+            <span className="block transform transition-transform duration-300 group-hover:-translate-y-full">{props.text}</span>
+            <span className="block transform transition-transform duration-300 group-hover:-translate-y-full">{props.text}</span>
+          </span>
+        </div>
+      </button>
+    )
+  }
+
+  if (props.createNoteBtn) {
+    return (
+      <button
+        onClick={props.createNote}
+        onMouseEnter={() => setButtonHover(true)}
+        onMouseLeave={() => setButtonHover(false)}
+        className={
+          `relative text-white px-6 py-3 gap-1.5 transition-colors cursor-pointer duration-300 font-bold flex overflow-hidden group hover:bg-[#DE351D]/85 rounded-lg grid-cols-7 items-center bg-[#DE351D] w-4/7`
+        }
+      >
+        <div className="col-span-1 flex justify-center">
+          <FaNoteSticky className={`text-2xl ${buttonHover ? 'text-white transition-colors duration-300' : ''} `} />
+        </div>
+        <div className="col-span-6 flex ml-2">
+          <span className="block h-[1.4em] overflow-hidden text-white">
             <span className="block transform transition-transform duration-300 group-hover:-translate-y-full">{props.text}</span>
             <span className="block transform transition-transform duration-300 group-hover:-translate-y-full">{props.text}</span>
           </span>

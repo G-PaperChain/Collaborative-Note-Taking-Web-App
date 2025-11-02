@@ -11,7 +11,8 @@ import { useTask } from '../../Context/TaskContext';
 import { MdDelete } from "react-icons/md";
 import { motion } from 'framer-motion';
 import { useTheme } from '../../Context/Theme';
-
+import Button from '../Button';
+import { useNavigate } from 'react-router-dom';
 
 const Modal = (props) => {
     const { api } = useApi()
@@ -25,9 +26,10 @@ const Modal = (props) => {
     const [date, setDate] = useState(null);
     const taskInputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [noteTitle, setNoteTitle] = useState("");
     const { isLoading, taskError, createTask, fetchTasks, tasks, deleteTask, taskStatusSwitch } = useTask();
-
     const { register, handleSubmit } = useForm();
+    const navigate = useNavigate();
 
     const onSubmit = (data) => {
         const formattedDate = date
@@ -40,6 +42,17 @@ const Modal = (props) => {
             fetchTasks()
         }
     };
+
+    const createNote = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await api.post("/note", { title: noteTitle , content: {} });
+            navigate(`/note/${res.data.note.write_token}/${res.data.note.id}`);
+            setNoteTitle("")
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         if (props.share) {
@@ -140,7 +153,7 @@ const Modal = (props) => {
             >
                 <div
                     className="fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6"
-                    onClick={(e) => e.stopPropagation()} // prevent background click
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <div className="grid grid-cols-8 h-max items-center">
                         <h1 className="text-black select-none col-span-5 col-start-1 text-2xl">
@@ -236,6 +249,48 @@ const Modal = (props) => {
                         />
                         <label className='text-[15px]'>Read Only</label>
                     </div>
+                </div>
+            </div>
+        )
+    }
+
+    if (props.createNoteModal) {
+        return (
+            <div
+                className='fixed h-screen w-screen bg-black/10 z-[301] text-black'
+                onClick={props.handleclose}
+            >
+                <div
+                    className='fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6'
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className='grid grid-cols-8 h-max items-center'>
+                        <h1 className='text-black select-none col-span-5 col-start-1 text-xl'>Create a note</h1>
+                        <IoIosClose
+                            onClick={props.handleclose}
+                            className='text-4xl hover:bg-black/5 rounded-full cursor-pointer mt-2.5 mr-2.5 col-start-8' />
+                    </div>
+                    <div className="flex flex-col mt-2.5">
+                        <form onSubmit={createNote} className='flex flex-col gap-10' >
+                            <div className='flex flex-col '>
+                                <label className="text-xl mb-1">Note:</label>
+                                <input
+                                    type="text"
+                                    autoFocus
+                                    className="border-1 px-4 py-1.5 rounded-xl text-lg"
+                                    onChange={(e) => setNoteTitle(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            handleSubmit(e);
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <Button createNoteBtn={true} text='Create a Note' createNote={createNote} />
+                        </form>
+                    </div>
+
+
                 </div>
             </div>
         )
