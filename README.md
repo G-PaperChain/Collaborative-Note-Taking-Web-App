@@ -1,6 +1,6 @@
 # Jotes
 
-A real-time collaborative note-taking and mind-mapping application with multi-user editing, permissions, and instant synchronization.
+A real-time collaborative note-taking and Task management system with multi-user editing, permissions, and instant synchronization.
 
 ## Tech Stack
 
@@ -11,7 +11,7 @@ A real-time collaborative note-taking and mind-mapping application with multi-us
 ## Features
 
 - 🎨 Real-time collaborative drawing and note-taking
-- 👥 Multi-user editing with live cursors
+- 👥 Multi-user editing
 - 🔒 Permission controls (read-only/edit access)
 - 🔗 Share notes via invite links
 - 📝 Task management integration
