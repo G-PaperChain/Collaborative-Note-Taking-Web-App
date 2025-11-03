@@ -37,14 +37,8 @@ export default function NotePage() {
 				const current = getSnapshot(editorRef.current.store);
 				const incoming = data.content;
 
-				console.log('🔍 COMPARING FULL SNAPSHOTS:', {
-					currentKeys: Object.keys(current),
-					incomingKeys: Object.keys(incoming)
-				});
-
 				// Compare FULL snapshots, not just pages
 				if (JSON.stringify(current) !== JSON.stringify(incoming)) {
-					// console.log('🔄 Applying incoming snapshot - CONTENT IS DIFFERENT');
 					applySnapshot(incoming);
 				}
 			} catch (error) {
@@ -74,12 +68,9 @@ export default function NotePage() {
 			if (!socket) return;
 
 			if (socket.connected) {
-				console.log('🎯 Socket already connected, joining note');
 				joinNote();
 			} else {
-				console.log('⏳ Waiting for socket connection before joining...');
 				socket.once('connect', () => {
-					console.log('🎯 Socket connected, now joining note');
 					joinNote();
 				});
 			}
@@ -157,7 +148,6 @@ export default function NotePage() {
 			loadSnapshot(editorRef.current.store, snapshot);
 			lastSnapshotRef.current = snapshot;
 
-			console.log('✅ Snapshot applied successfully');
 		} catch (error) {
 			console.error('❌ Failed to apply snapshot:', error);
 			setError('Failed to load drawing data');
@@ -167,7 +157,6 @@ export default function NotePage() {
 	}
 
 	const setupRealTimeSync = (editor, canEdit) => {
-		console.log('🔄 Setting up real-time sync, canEdit:', canEdit);
 		if (!canEdit) {
 			return null;
 		}
@@ -204,7 +193,7 @@ export default function NotePage() {
 	return (
 		<div className="w-screen h-screen relative">
 			<BottomNav notepage={true} />
-			<Tldraw onMount={initializeEditor} hideUi={HideUi()} className={`${ isDark ? "invert" : '' }`} />
+			<Tldraw onMount={initializeEditor} hideUi={HideUi()} className={`${ isDark ? "invert" : '' } transition-all duration-500 ease-out`} />
 
 			{!canEdit && (
 				<div className="absolute bottom-10 right-3 bg-yellow-200 text-black px-3 py-1 rounded-md shadow z-[500]">

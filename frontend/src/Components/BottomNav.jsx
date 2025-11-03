@@ -55,7 +55,7 @@ const BottomNav = (props) => {
 
 						<div
 							className="flex justify-center items-center col-start-2 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
-							title={`useIsDarkMode`}
+							title={`Theme`}
 							onClick={() => toggleTheme()}
 						>
 							<CgDarkMode className='rotate-270 w-6 h-6' />
@@ -81,6 +81,7 @@ const BottomNav = (props) => {
 
 						<div
 							className="flex justify-center items-center col-start-5 h-full w-10 hover:bg-red-500 rounded-4xl transition-colors duration-200 cursor-pointer text-md shadow-2xl"
+							title={`Tasks`}
 							onClick={() => setActiveModal(activeModal === "taskEmbed" ? null : "taskEmbed")}
 						>
 							<FaTasks className="rotate-270 w-4 h-4" />

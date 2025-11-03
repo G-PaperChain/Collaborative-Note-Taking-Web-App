@@ -9,7 +9,6 @@ import { Calendar } from 'primereact/calendar';
 import { useForm } from 'react-hook-form'
 import { useTask } from '../../Context/TaskContext';
 import { MdDelete } from "react-icons/md";
-import { motion } from 'framer-motion';
 import { useTheme } from '../../Context/Theme';
 import Button from '../Button';
 import { useNavigate } from 'react-router-dom';
@@ -301,17 +300,17 @@ const Modal = (props) => {
             <div className='fixed h-screen w-screen bg-black/10 z-[301] text-black'>
                 <div className='fixed top-3/11 left-3/8 h-75 w-100 bg-white rounded-2xl shadow-2xl p-6'>
                     <div className='grid grid-cols-8 h-max items-center'>
-                        <h1 className='text-black select-none col-span-5 col-start-1 text-xl'>Embed Tasks</h1>
+                        <h1 className='text-black select-none col-span-5 col-start-1 text-xl'>Tasks</h1>
                         <IoIosClose
                             onClick={props.handleclose}
                             className='text-4xl hover:bg-black/5 rounded-full cursor-pointer mt-2.5 mr-2.5 col-start-8' />
                     </div>
-                    <div>
+                    <div className='flex flex-col gap-1'>
                         {
                             tasks.map((task) =>
-                                <motion.div
+                                <div
                                     key={task.task_id}
-                                    className='bg-[#F73B20] hover:bg-[#D73B20] transition-all duration-200 text-white text-2xl px-6 py-3 rounded-2xl'
+                                    className='bg-[#F73B20] hover:bg-[#D73B20] transition-all duration-200 text-white text-2xl px-4 py-3 rounded-2xl'
                                     style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
                                     onMouseDown={handleDragStart}
                                     onMouseUp={handleDragEnd}
@@ -332,7 +331,7 @@ const Modal = (props) => {
                                         </div>
                                         <MdDelete className='w-8 h-8' onClick={() => deleteTask(task.task_id)} />
                                     </div>
-                                </motion.div>
+                                </div>
                             )
                         }
                     </div>

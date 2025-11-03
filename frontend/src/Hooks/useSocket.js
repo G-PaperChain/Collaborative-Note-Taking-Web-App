@@ -45,12 +45,10 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
     const handleReconnection = (socket) => {
 
         socket.on('reconnect_attempt', () => {
-            console.log('🔁 Reconnecting...')
             setIsReconnecting(true)
         })
 
         socket.on('reconnect', () => {
-            console.log('✅ Reconnected')
             setIsReconnecting(false)
             if (noteId && token) {
                 socket.emit('join_note', { note_id: noteId, token })
@@ -68,7 +66,6 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
 
         try {
             socket.on('connect', () => {
-                console.log('✅ Connected:', socket.id) // LOG
                 setIsReconnecting(false)
             })
 
@@ -77,7 +74,6 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
             handleReconnection(socket)
 
             socket.on('disconnect', (reason) => {
-                console.log('❌ Disconnected:', reason)
                 if (reason !== 'io client disconnect') setIsReconnecting(true)
                 setJoined(false)
             })
@@ -88,7 +84,6 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
             })
 
             socket.on('joined', (data) => {
-                console.log('🎉 SUCCESSFULLY JOINED NOTE ROOM:', data);
                 setJoined(true)
                 setIsReconnecting(false)
             })
@@ -103,12 +98,10 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
             })
 
             socket.on('user_joined', (data) => {
-                console.log('👤 User joined:', data.user)
                 addToast(`${data.user} joined`, 'success')
             })
 
             socket.on('user_left', (data) => {
-                console.log('👤 User left:', data.user)
                 addToast(`${data.user} left`, 'error')
             })
 
@@ -123,10 +116,8 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
         const socket = socketRef.current;
 
         if (socket?.connected && noteId && token) {
-            console.log('🚀 Emitting join_note event - socket is ready!');
             socket.emit('join_note', { note_id: noteId, token });
         } else {
-            console.log('⏳ Socket not ready, will join when connected');
             // Don't throw error - just wait for connection
         }
     }, [noteId, token]);
@@ -138,19 +129,15 @@ export const useSocket = (noteId, token, onNoteUpdated, showUserLog) => {
             return
         }
 
-        console.log('🚪 leaveNote called, socket connected:', socket.connected)
-        console.log('📡 Socket ID:', socket.id)
 
         if (noteId) {
             socket.emit('leave_note', { note_id: noteId }, (ack) => {
-                console.log('✅ leave_note acknowledged:', ack)
             })
 
             socket.volatile.emit('leave_note', { note_id: noteId })
         }
 
         setTimeout(() => {
-            console.log('🔌 Force disconnecting socket')
             socket.disconnect()
         }, 500)
     }, [noteId, token])
