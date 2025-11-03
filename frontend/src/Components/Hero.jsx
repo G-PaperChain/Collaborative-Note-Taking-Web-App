@@ -1,19 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import bgvid from '/background.mp4'
-import Navbar from './Navbar'
-import { useTheme } from '../Context/Theme'
-import { MdOutlineHome } from "react-icons/md";
-import { GoChevronDown } from "react-icons/go";
-import { GoArrowUpRight } from "react-icons/go";
-import { FaNoteSticky } from "react-icons/fa6";
-import { GrNotes } from "react-icons/gr";
-import { Link } from 'react-router-dom';
-import { motion } from "motion/react"
-import { TiPin } from "react-icons/ti";
-import purpleDev from '/purple.png'
-import { IoGitNetwork } from 'react-icons/io5';
-import SecondPage from './SecondPage'
-import BottomNav from './BottomNav'
+import { useEffect, useRef, useState } from 'react';
+import bgvid from '/background.mp4';
+import Navbar from './Navbar';
+import { useTheme } from '../Context/Theme';
+import BottomNav from './BottomNav';
 
 
 const MyNotesPage = () => {
